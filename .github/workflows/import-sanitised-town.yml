@@ -48,6 +48,16 @@ jobs:
           node desktop-repo/tools/privacy-gate.mjs desktop-repo/game
           cd desktop-repo
           npm run verify:desktop
+      - name: Install desktop WebGL test browser
+        run: |
+          cd upstream/repository-town
+          npx playwright install --with-deps chromium
+      - name: Real browser load test of exported game (all third-party calls blocked)
+        run: |
+          node upstream/repository-town/tools/serve.mjs desktop-repo/game 8091 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
+          node desktop-repo/tools/browser-smoke.mjs
       - name: Commit only approved public game snapshot
         run: |
           cd desktop-repo
