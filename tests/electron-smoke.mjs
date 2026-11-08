@@ -75,11 +75,14 @@ try {
     null,{timeout:12000});
   assert.equal(await page.evaluate(()=>document.pointerLockElement===document.querySelector('canvas')),
     true,'L must capture the real game canvas and hide/free the mouse cursor');
-  await page.keyboard.press('Escape');
+  // The L key is the game's documented toggle. CDP's synthetic Escape is
+  // swallowed by Chromium while pointer-locked on Windows CI, so it cannot
+  // reliably exercise the native Esc release behaviour.
+  await page.keyboard.press('l');
   await page.waitForFunction(()=>document.pointerLockElement===null,
     null,{timeout:12000});
   assert.equal(await page.evaluate(()=>document.pointerLockElement),null,
-    'Escape must release the captured mouse');
+    'L must release the captured mouse and restore the cursor');
   const backup=await page.evaluate(async()=>{
     const {exportProgress}=await import('./engine/save-transfer.js');
     const result=exportProgress(localStorage);
