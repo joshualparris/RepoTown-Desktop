@@ -33,6 +33,18 @@ try {
   assert(result.hasHud&&result.canvasCount>0,'town HUD or canvas missing');
   assert.equal(result.worldStatus,200);
   assert(result.houses>=100,'incomplete packaged world');
+  const savePage=await page.evaluate(async()=>{
+    const control=document.getElementById('settings-save-transfer');
+    const response=await fetch('/release.html');
+    return {control:!!control,href:control?.getAttribute('href'),
+      status:response.status,html:await response.text()};
+  });
+  assert(savePage.control,'Settings must retain required save-transfer control');
+  assert.equal(savePage.href,'release.html');
+  assert.equal(savePage.status,200);
+  assert(savePage.html.includes('id="export"')&&savePage.html.includes('id="import"'),
+    'save backup and restore must remain available without internet');
+
   const menu=await app.evaluate(({Menu})=>
     Menu.getApplicationMenu()?.items.find(i=>i.label==='Game')?.submenu?.items.map(i=>i.label)||[]);
   assert(menu.includes('Back up progress…')&&menu.includes('Restore progress…'),
