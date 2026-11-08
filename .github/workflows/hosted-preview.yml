@@ -21,5 +21,5 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Run live preview startup test
         env:
-          PUBLIC_PLAY_URL: https://repotown-desktop-preview.vercel.app/
+          PUBLIC_PLAY_URL: https://joshualparris.github.io/repository-town/steam-preview/
         run: node tests/hosted-preview.mjs
