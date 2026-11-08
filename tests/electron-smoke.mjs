@@ -33,11 +33,32 @@ try {
   assert(result.hasHud&&result.canvasCount>0,'town HUD or canvas missing');
   assert.equal(result.worldStatus,200);
   assert(result.houses>=100,'incomplete packaged world');
+  const menu=await app.evaluate(({Menu})=>
+    Menu.getApplicationMenu()?.items.find(i=>i.label==='Game')?.submenu?.items.map(i=>i.label)||[]);
+  assert(menu.includes('Back up progress…')&&menu.includes('Restore progress…'),
+    'desktop must include safe backup and restore actions');
+  await page.waitForSelector('#rt-desktop-guide',{timeout:10000});
+  assert.match(await page.locator('#rt-guide-title').textContent(),/Welcome/);
+  await page.locator('#rt-guide-skip').click();
+  assert.equal(await page.evaluate(()=>
+    localStorage.getItem('repository-town.desktop-tutorial.v1')),'finished');
+  const backup=await page.evaluate(async()=>{
+    const {exportProgress}=await import('./engine/save-transfer.js');
+    const result=exportProgress(localStorage);
+    return {format:result.format,version:result.version,
+      hasPassword:Object.keys(result.entries).some(k=>/token|password/i.test(k))};
+  });
+  assert.equal(backup.format,'repository-town-progress');
+  assert.equal(backup.version,1);
+  assert.equal(backup.hasPassword,false,'no login secrets in exported progress');
+
   await page.evaluate(()=>localStorage.setItem('repo-town-test-marker','success'));
   await page.reload({waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>window.__town?.state &&
     document.getElementById('loading')?.hidden===true,null,{timeout:120000});
   assert.equal(await page.evaluate(()=>localStorage.getItem('repo-town-test-marker')),'success');
+  assert.equal(await page.locator('#rt-desktop-guide').count(),0,
+    'finished first-day tutorial must not obscure later gameplay');
   await page.evaluate(()=>localStorage.removeItem('repo-town-test-marker'));
   assert.deepEqual(errors,[],'unexpected runtime errors');
   console.log('PASS: actual Windows game executable launches WebGL world and saves persist after reload.');
