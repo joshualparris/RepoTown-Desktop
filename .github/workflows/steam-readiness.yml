@@ -12,6 +12,18 @@ on:
       - 'store/**'
       - 'package.json'
       - '.github/workflows/steam-readiness.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'desktop/**'
+      - 'game/**'
+      - 'tests/**'
+      - 'tools/steam-readiness.mjs'
+      - 'tools/capsules.mjs'
+      - 'tools/screenshots.mjs'
+      - 'store/**'
+      - 'package.json'
+      - '.github/workflows/steam-readiness.yml'
   workflow_dispatch:
   schedule:
     - cron: '0 3 * * 1' # weekly drift check (assets, snapshot, docs)
