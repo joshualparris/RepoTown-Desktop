@@ -54,7 +54,7 @@ function sanitise(body,rel){
   content=content.replace(/\b[a-z][a-z0-9_-]{2,}\b/gi,m=>blocked.has(hash(m))?'TownResident':m);
   if(rel==='index.html'){
     content=content.replace(/<script\b[^>]*\bsrc="ui\/analytics\.js"[^>]*><\/script>/gi,'');
-    content=content.replace(/<a\b[^>]*href="arcade\.html"[^>]*>.*?<\/a>/gi,'');
+    content=content.replace(/<a\\b[^>]*href="(?:arcade|address-map|narromine-progress|narromine-compare|people|release)\\.html"[^>]*>[\\s\\S]*?<\\/a>/gi,'');
   }
   return redactLocationPhrases(content);
 }
