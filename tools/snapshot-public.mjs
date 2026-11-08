@@ -129,6 +129,12 @@ for(const name of ['first-day.js','first-day.css']){
   fs.copyFileSync(sourceFile,path.join(destination,'ui','desktop-'+name));
   copied++;totalBytes+=fs.statSync(sourceFile).size;
 }
+// The Steam edition owns its controller-enabled input layer. Re-exporting
+// from the browser game's public build must not revert gamepad support.
+const reviewedInput=path.resolve(path.dirname(fileURLToPath(import.meta.url)),
+  '../desktop/overrides/input.js');
+if(!fs.existsSync(reviewedInput))throw Error('Missing reviewed Steam Input override');
+fs.copyFileSync(reviewedInput,path.join(destination,'engine','input.js'));
 const htmlFile=path.join(destination,'index.html');
 const html=fs.readFileSync(htmlFile,'utf8');
 if(!html.includes('</head>'))throw Error('Missing HTML head; cannot install onboarding.');
