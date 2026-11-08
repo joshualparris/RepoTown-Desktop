@@ -3,6 +3,9 @@ on:
   push:
     branches: [main]
     paths:
+      - 'tools/itch-assets.mjs'
+      - 'tools/itch-readiness.mjs'
+      - 'store/itch/**'
       - 'desktop/**'
       - 'game/**'
       - 'tests/**'
@@ -15,6 +18,9 @@ on:
   pull_request:
     branches: [main]
     paths:
+      - 'tools/itch-assets.mjs'
+      - 'tools/itch-readiness.mjs'
+      - 'store/itch/**'
       - 'desktop/**'
       - 'game/**'
       - 'tests/**'
@@ -55,6 +61,8 @@ jobs:
         run: xvfb-run -a npm run test:desktop-achievements
       - name: Regenerate capsule artwork (dimension check)
         run: npm run store:capsules
+      - name: itch.io release readiness (free platform path)
+        run: npm run itch:ready
       - name: Steam readiness gate (build config, assets, integration surface)
         run: npm run steam:ready
       - name: Commit exact-size Steam artwork after validation on main

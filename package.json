@@ -23,7 +23,9 @@
     "test:offline": "node --test tests/offline-interactions.mjs",
     "test:rights": "node tools/third-party-rights.mjs",
     "test:quality": "node tests/steam-quality.mjs",
-    "test:steam-bridge": "node tests/steam-bridge.test.mjs"
+    "test:steam-bridge": "node tests/steam-bridge.test.mjs",
+    "itch:assets": "node tools/itch-assets.mjs",
+    "itch:ready": "node tools/itch-readiness.mjs"
   },
   "devDependencies": {
     "electron": "45.2.3",
