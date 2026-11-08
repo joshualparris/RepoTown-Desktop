@@ -1,0 +1,37 @@
+name: Desktop privacy and packaging checks
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  safe-source:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm run verify:desktop
+      - name: Validate exported game
+        if: hashFiles('game/index.html') != ''
+        run: npm run audit:privacy
+  windows-package:
+    runs-on: windows-2022
+    needs: safe-source
+    if: hashFiles('game/index.html') != ''
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-audit --no-fund
+      - run: npm run verify:desktop
+      - run: npm run audit:privacy
+      - run: npm run package:windows
+      - uses: actions/upload-artifact@v4
+        with:
+          name: RepoTown-Desktop-windows-development
+          path: release/*.zip
+          retention-days: 7

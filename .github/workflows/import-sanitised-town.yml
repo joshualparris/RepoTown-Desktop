@@ -1,0 +1,62 @@
+name: Export privacy-safe desktop game snapshot
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tools/snapshot-public.mjs'
+      - 'tools/privacy-gate.mjs'
+      - '.github/workflows/import-sanitised-town.yml'
+      - 'desktop/**'
+permissions:
+  contents: write
+concurrency:
+  group: desktop-snapshot-main
+  cancel-in-progress: false
+jobs:
+  build-and-copy:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout clean desktop edition
+        uses: actions/checkout@v4
+        with:
+          path: desktop-repo
+          persist-credentials: true
+      - name: Checkout canonical source for isolated build only (never copy history)
+        uses: actions/checkout@v4
+        with:
+          repository: joshualparris/JoshMemory
+          ref: main
+          path: upstream
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build upstream PUBLIC game (private build never staged)
+        run: |
+          cd upstream/repository-town
+          npm ci --no-audit --no-fund
+          npm run build
+          npm run check:privacy
+      - name: Copy strictly allowlisted runtime
+        run: node desktop-repo/tools/snapshot-public.mjs upstream/repository-town/dist/public desktop-repo/game
+      - name: Block all detected private data before ANY Git add
+        run: |
+          node desktop-repo/tools/privacy-gate.mjs desktop-repo/game
+          cd desktop-repo
+          npm run verify:desktop
+      - name: Commit only approved public game snapshot
+        run: |
+          cd desktop-repo
+          git config user.name 'repo-town-desktop-bot'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -f game/
+          if git diff --cached --quiet; then
+            echo 'No changes to approved runtime'
+          else
+            git commit -m 'build: update sanitized desktop game runtime'
+            git push origin HEAD:main
+          fi

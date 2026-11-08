@@ -1,0 +1,15 @@
+node_modules/
+release/
+.cache/
+*.log
+*.env
+.env*
+*.key
+*.pem
+*.pfx
+*.p12
+*.cert
+*.secret
+.DS_Store
+# Game assets enter only through reviewed, privacy-gated export workflow.
+game/
