@@ -1,0 +1,30 @@
+{
+  "generated": "2026-11-08T03:00:00Z",
+  "source": "in-game capture, headless Chromium WebGL",
+  "shots": [
+    {
+      "file": "01-morning-street.png",
+      "caption": "A quiet street in the new neighbourhood"
+    },
+    {
+      "file": "02-afternoon-high-street.png",
+      "caption": "Afternoon on the High Street"
+    },
+    {
+      "file": "03-evening-square.png",
+      "caption": "Evening: the windows light up around the square"
+    },
+    {
+      "file": "04-night-street.png",
+      "caption": "Late night under the street lights"
+    },
+    {
+      "file": "05-inside-a-house.png",
+      "caption": "Step inside a neighbour\u2019s home"
+    },
+    {
+      "file": "06-driving.png",
+      "caption": "Take a drive through the neighbourhood"
+    }
+  ]
+}

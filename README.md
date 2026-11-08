@@ -9,6 +9,7 @@ This repository is intentionally **separate from the live web game and its devel
 - **[Play the browser preview](https://repotown-desktop-preview.vercel.app/)** — public, no Steam installation required. This copy is built from the privacy-screened desktop game snapshot; best tried on a laptop or desktop.
 - **[Download the verified Windows playtest build](https://github.com/joshualparris/RepoTown-Desktop/releases)** — select the latest Windows *prerelease*, download the ZIP, extract it, and launch `Repository Town.exe`. No Steam account is required. It has passed an actual packaged Electron game-load and local-storage-reload test.
 - **Status:** playable development build, **not** a released Steam product. Steamworks onboarding, commercial asset rights, a complete shared-world simulation, and gameplay polish are still required.
+- **Steam readiness:** everything local is done and gated — optional Steamworks wrapper, 13 offline-first achievements with in-game toasts, fullscreen + window-state persistence, local crash reports, NSIS installer, store capsules and genuine screenshots. Run `npm run steam:ready` for the full gate; the remaining steps are the paid Steam Direct items in `docs/STEAMWORKS_ONBOARDING.md`.
 
 ## Privacy-first source policy
 - Never fork, mirror, submodule, or import the original repository's Git history.
@@ -19,7 +20,9 @@ This repository is intentionally **separate from the live web game and its devel
 - No Steam credentials, signing certificates, paid integrations or publication actions without explicit approval.
 
 ## What the Steam version needs
-A stable desktop client with smooth graphics, keyboard/mouse and controller support, full-screen/windowed modes, local saving and later Steam Cloud, achievements, optional multiplayer, a reliable first-hour tutorial, meaningful jobs/citizen simulation, readable characters and performant interiors. This is an ambitious milestone rather than a statement of current completion.
+A stable desktop client with smooth graphics, keyboard/mouse and controller support, full-screen/windowed modes, local saving and later Steam Cloud, achievements, optional multiplayer, a reliable first-hour tutorial, meaningful jobs/citizen simulation, readable characters and performant interiors.
+
+Current state of that list: full-screen/windowed (F11 / Alt+Enter, persisted), local saving, achievements (13, offline-first, Steam-ready), optional multiplayer presence, crash reports and the native Windows installer are done; controller support, Steam Cloud and Steam Deck validation remain, plus the gameplay polish gates tracked in `docs/STEAM_RELEASE_PLAN.md`.
 
 The original browser edition is still developed separately. This repository's own privacy-gated snapshot workflow prepares files for desktop packaging. See `docs/STEAM_RELEASE_PLAN.md` after bootstrap.
 

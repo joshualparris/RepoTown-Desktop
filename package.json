@@ -1,17 +1,21 @@
 {
   "name": "repotown-desktop",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Privacy-gated Steam development candidate",
   "main": "desktop/main.cjs",
   "scripts": {
     "start": "electron .",
     "audit:privacy": "node tools/privacy-gate.mjs game",
-    "verify:desktop": "node --check desktop/main.cjs && node --check tools/privacy-gate.mjs && node --check tools/snapshot-public.mjs && node tools/verify-desktop.mjs",
-    "package:windows": "electron-builder --win zip --x64",
+    "verify:desktop": "node --check desktop/main.cjs && node --check desktop/preload.cjs && node --check desktop/steam.cjs && node --check desktop/achievements.cjs && node --check tools/privacy-gate.mjs && node --check tools/snapshot-public.mjs && node tools/verify-desktop.mjs",
+    "package:windows": "electron-builder --win nsis zip --x64",
     "test:electron": "node tests/electron-smoke.mjs",
-    "test:steam-ready": "npm run verify:desktop && npm run audit:privacy",
-    "steam:manifest": "node tools/steam-manifest.mjs"
+    "test:steam-ready": "npm run verify:desktop && npm run audit:privacy && node tests/steam-achievements.test.mjs",
+    "steam:manifest": "node tools/steam-manifest.mjs",
+    "steam:ready": "node tools/steam-readiness.mjs",
+    "store:screenshots": "node tools/screenshots.mjs",
+    "store:capsules": "node tools/capsules.mjs",
+    "test:desktop-achievements": "node tests/desktop-achievements.test.mjs"
   },
   "devDependencies": {
     "electron": "39.0.0",
@@ -23,7 +27,8 @@
     "productName": "Repository Town",
     "asar": true,
     "directories": {
-      "output": "release"
+      "output": "release",
+      "buildResources": "desktop/assets"
     },
     "files": [
       "desktop/**/*",
@@ -33,10 +38,18 @@
     ],
     "win": {
       "target": [
+        "nsis",
         "zip"
       ],
+      "icon": "desktop/assets/icon.png",
       "artifactName": "RepoTown-Desktop-${version}-${arch}.${ext}"
     },
-    "publish": null
+    "publish": null,
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": false,
+      "artifactName": "RepositoryTown-Setup-${version}.${ext}"
+    }
   }
 }

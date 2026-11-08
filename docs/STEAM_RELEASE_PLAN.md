@@ -13,6 +13,29 @@
 
 Source Steam store pages: https://store.steampowered.com/app/1331550, https://store.steampowered.com/app/1062520, https://store.steampowered.com/app/1084600, https://store.steampowered.com/app/512900
 
+## Status update — 8 November 2026 (post Steam-readiness sprint)
+
+Everything Josh can control locally is now DONE and gated in CI (`npm run steam:ready`, workflow `steam-readiness.yml`):
+
+| Item | Status |
+|---|---|
+| Steamworks wrapper (offline-safe, optional steamworks.js) | done — `desktop/steam.cjs` |
+| 13 achievements, offline-first, local persistence + toasts | done — `desktop/achievements.cjs` + injected bridge |
+| Fullscreen (F11 / Alt+Enter) + window state persistence | done — `desktop/main.cjs` |
+| Local crash reports (no identifiers) | done — `userData/crash-logs` |
+| Windows NSIS installer + zip + app icon | done — `package.json` build config |
+| Store capsules at exact Steam dimensions | done — `store/capsules/` (`npm run store:capsules`) |
+| 7 genuine in-game screenshots (1920x1080) | done — `store/screenshots/` (`npm run store:screenshots`) |
+| SteamPipe preview manifest generator | done — `npm run steam:manifest` |
+| Steamworks onboarding runbook (paid steps only) | done — `docs/STEAMWORKS_ONBOARDING.md` |
+
+Still open (all require the Steam account / rights work, not code):
+- Steamworks App ID + US$100 Steam Direct fee + 21-day waiting period + 2-week Coming Soon page.
+- Trailer (10-second gameplay) — needs recording pass on a GPU machine.
+- Audio rights audit, nested-game exclusion review (unchanged).
+- Controller support/remapping, Steam Deck validation (P1, post-launch acceptable).
+- The remaining P0 gameplay gates above (first 30 minutes polish, world behaviour) live in the upstream game repo, not here.
+
 ## Quality-first release gates
 - **P0 Privacy and rights:** clean export from public build only; zero personal data, home locations, family recordings, credentials and private-repository content. Do not ship nested games, unreviewed music or branded commercial assets. Audit licences/credits before sale.
 - **P0 First 30 minutes:** fast launch, choose character, intuitive controls and a guided first-day storyline with genuine tasks, first wage/payment and a useful purchase. Make it enjoyable without reading a manual.
