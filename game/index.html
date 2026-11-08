@@ -19,6 +19,8 @@
 <script defer src="ui/minimap-visibility.js"></script>
 <script type="importmap">{"imports":{"three":"./vendor/three.module.min.js","three/addons/utils/BufferGeometryUtils.js":"./vendor/BufferGeometryUtils.js"}}</script>
 
+<link rel="stylesheet" href="ui/desktop-first-day.css">
+<script defer src="ui/desktop-first-day.js"></script>
 </head>
 <body>
 <div id="loading" aria-labelledby="loading-title">
@@ -68,10 +70,10 @@
     <button id="btn-journal" type="button" title="Adventure quests and treasures (J)">📖 Quests <span id="expedition-count"></span></button>
     <button id="btn-npcs" type="button" title="Meet the town's characters">💬 NPCs</button>
     <button id="btn-electrical-grid" type="button" title="Inspect the physical town grid, solar, meters and local outages" aria-label="Open town electrical grid inspector">⚡ Grid</button>
-    <a class="btn-link" href="address-map.html">Plot map</a>
-    <a class="btn-link" href="narromine-progress.html" title="Inspect surveyed buildings and modelling evidence in real Narromine">Narromine survey</a>
-    <a class="btn-link" id="btn-streetview" href="narromine-compare.html" target="_blank" rel="noopener" title="Compare this exact spot with real Narromine in Google Street View (opens a new tab; Street View use is counted and shown)">Street View</a>
-    <a class="btn-link" href="people.html">NPC Lounge</a>
+    
+    
+    
+    
     
     <button id="btn-time" type="button" title="Jump the town clock to the next part of the day (T)">☀️ Day</button>
     <button id="btn-sound" type="button" aria-pressed="false" title="Birdsong, crickets, wind, traffic, the town bell and footsteps">🔇 Sound</button>
@@ -123,7 +125,7 @@
   </fieldset>
   <fieldset><legend>Saved progress</legend>
     <p>Your game saves automatically on this device. No account is needed.</p>
-    <a id="settings-save-transfer" class="btn-link" href="release.html" target="_blank" rel="noopener">Back up or restore your save</a>
+    <a id="settings-save-transfer" class="btn-link" href="release.html">Back up or restore saved progress</a>
     <button id="settings-new-game" type="button">Start a new game</button>
     <p id="settings-new-game-note" hidden>This clears your town, money, items, skills and quests on this device. Your settings stay. <button id="settings-new-game-confirm" type="button">Yes, start over</button> <button id="settings-new-game-cancel" type="button">Keep my game</button></p>
   </fieldset>

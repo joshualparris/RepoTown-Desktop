@@ -1,7 +1,8 @@
 'use strict';
 // Isolated, local-only Electron wrapper: no Node integration in game scripts.
 // Steam integration is optional and fully offline-safe (desktop/steam.cjs).
-const {app,BrowserWindow,session,shell,dialog}=require('electron');
+const {app,BrowserWindow,session,shell,dialog,Menu}=require('electron');
+const progress=require('./progress.cjs');
 const fs=require('node:fs');
 const path=require('node:path');
 const http=require('node:http');
@@ -22,7 +23,9 @@ const mime={
   '.woff2':'font/woff2','.txt':'text/plain; charset=utf-8'
 };
 let server;
-let win=null; // single game window
+let win=null; // single game window (Steam/achievements side)
+let currentWindow=null; // menu/save side: last created window
+let restoringSave=false;
 
 // ---- crash logging (local only, no identifiers, no upload) ----
 function crashLog(kind,detail){
@@ -59,7 +62,9 @@ function sendFile(res,full,req,transform){
   const headers={
     'content-type':mime[path.extname(full).toLowerCase()]||'application/octet-stream',
     'cache-control':'no-store',
-    'x-content-type-options':'nosniff','access-control-allow-origin':BASE
+    'x-content-type-options':'nosniff','access-control-allow-origin':BASE,
+    'x-frame-options':'DENY','referrer-policy':'no-referrer',
+    'cross-origin-resource-policy':'same-origin'
   };
   if(transform){
     // The injected HTML is longer than the file on disk; set the REAL length.
@@ -98,12 +103,93 @@ function serve(req,res){
     res.writeHead(404);res.end();
   }
 }
-function openExternal(raw){
+async function openExternal(raw){
   try{
     const u=new URL(raw);
-    // Never launch arbitrary local/system schemes from untrusted game content.
-    if(u.protocol==='https:')shell.openExternal(u.href).catch(()=>{});
+    // No automatic navigation from modifiable game data. Block local/private
+    // services, username-bearing URLs, custom schemes and unsafe protocols.
+    if(u.protocol!=='https:'||u.username||u.password||u.hostname==='localhost'||
+      u.hostname.endsWith('.local')||/^(\d+\.){3}\d+$/.test(u.hostname))return;
+    const confirm=await dialog.showMessageBox(currentWindow||undefined,{
+      type:'question',title:'Open a website?',message:'Open this external website?',
+      detail:u.origin,buttons:['Cancel','Open browser'],defaultId:0,cancelId:0,noLink:true
+    });
+    if(confirm.response===1)await shell.openExternal(u.href);
   }catch{}
+}
+function reportSaveError(win,error) {
+  dialog.showMessageBox(win,{type:'error',title:'Could not access progress',
+    message:'Your progress has not been changed.',
+    detail:String(error?.message||'Save transfer failed.').slice(0,300)}).catch(()=>{});
+}
+async function backupProgress(win) {
+  try {
+    const raw=await progress.exportProgress(win.webContents);
+    const result=await dialog.showSaveDialog(win,{
+      title:'Back up Repository Town progress',
+      defaultPath:'Repository-Town-backup.json',
+      filters:[{name:'Repository Town progress',extensions:['json']}]
+    });
+    if(result.canceled||!result.filePath)return;
+    await fs.promises.writeFile(result.filePath,raw,{encoding:'utf8',mode:0o600});
+  }catch(e){reportSaveError(win,e);}
+}
+async function restoreProgress(win) {
+  try {
+    const selection=await dialog.showOpenDialog(win,{
+      title:'Restore Repository Town progress',
+      properties:['openFile'],
+      filters:[{name:'Repository Town progress',extensions:['json']}]
+    });
+    if(selection.canceled||!selection.filePaths?.length)return;
+    const file=selection.filePaths[0];
+    const stat=await fs.promises.stat(file);
+    if(stat.size>progress.MAX_BYTES)throw Error('Save exceeds the 5 MB import limit.');
+    const raw=await fs.promises.readFile(file,'utf8');
+    const candidate=progress.validateSave(raw);
+    const choice=await dialog.showMessageBox(win,{type:'warning',
+      title:'Restore previous progress?',
+      message:'Replace the current town progress with this backup?',
+      detail:'Your current progress will be backed up privately first. The game will restart.',
+      buttons:['Cancel','Restore progress'],cancelId:0,defaultId:0,noLink:true
+    });
+    if(choice.response!==1)return;
+    const existing=await progress.exportProgress(win.webContents);
+    // A failed backup MUST stop the restore. There is no unsafe override.
+    await progress.writeBackup(app.getPath('userData'),existing);
+    const count=await progress.importProgress(win.webContents,JSON.stringify(candidate));
+    if(!count)throw Error('No progress was restored.');
+    // Destroy rather than navigate: old game unload autosave must not
+    // overwrite the newly imported save before a fresh process reads it.
+    restoringSave=true;
+    try {win.destroy();windowForGame();}
+    finally {restoringSave=false;}
+  }catch(e){reportSaveError(win,e);}
+}
+function installMenu(win){
+  Menu.setApplicationMenu(Menu.buildFromTemplate([
+    {label:'Game',submenu:[
+      {label:'Back up progress…',accelerator:'CmdOrCtrl+Shift+S',
+        click:()=>backupProgress(currentWindow||win)},
+      {label:'Restore progress…',click:()=>restoreProgress(currentWindow||win)},
+      {label:'Open backup folder',click:()=>{
+        const folder=path.join(app.getPath('userData'),'save-backups');
+        fs.mkdirSync(folder,{recursive:true});shell.openPath(folder).catch(()=>{});
+      }},
+      {type:'separator'},{role:'quit'}
+    ]},
+    {label:'View',submenu:[
+      {role:'reload'},{role:'togglefullscreen'},{role:'resetZoom'},{role:'zoomIn'},{role:'zoomOut'}
+    ]},
+    {label:'Help',submenu:[
+      {label:'How to play',click:()=>{
+        dialog.showMessageBox(currentWindow||win,{type:'info',title:'Repository Town controls',
+          message:'Explore your town',
+          detail:'Move: W A S D or arrow keys. Look: drag the mouse or press L to capture. E to interact. M for the map. Open the town HUD for jobs, shops, money and quests. Progress saves locally; use Game → Back up progress to keep a separate copy.',
+          buttons:['OK']}).catch(()=>{});
+      }}
+    ]}
+  ]));
 }
 function windowForGame(){
   const saved=readWindowState();
@@ -136,6 +222,9 @@ function windowForGame(){
     dialog.showErrorBox('Desktop game','The game window stopped unexpectedly and has been restarted. A local crash log was saved.');
     win.loadURL(BASE+'/index.html');
   });
+  currentWindow=win0;
+  installMenu(win0);
+  win.on('closed',()=>{if(currentWindow===win0)currentWindow=null;if(win===win0)win=null;});
   win.webContents.setWindowOpenHandler(({url})=>{
     openExternal(url);return {action:'deny'};
   });
@@ -172,12 +261,14 @@ else {
     console.log('[steam] available='+steamStatus.available+(steamStatus.appId?(' appid='+steamStatus.appId):'')+(steamStatus.error?(' note='+steamStatus.error):''));
     // Achievements: local progress lives in userData; Steam hears about unlocks
     // only when Steamworks is wired. Offline play still unlocks locally.
-    achievements.loadProgress(app.getPath('userData'));
+    // RT_ACHIEVEMENTS_DIR lets end-to-end tests start from a clean slate.
+    const achievementsDir=process.env.RT_ACHIEVEMENTS_DIR||app.getPath('userData');
+    achievements.loadProgress(achievementsDir);
     const {ipcMain}=require('electron');
     ipcMain.handle('desktop:achievement-api',()=>achievements.ACHIEVEMENTS.map(a=>({id:a.id,name:a.name,desc:a.desc})));
     ipcMain.on('desktop:state',(event,{state,multiplayer})=>{
       try{
-        const newly=achievements.evaluate(state,multiplayer,app.getPath('userData'));
+        const newly=achievements.evaluate(state,multiplayer,achievementsDir);
         for(const a of newly){
           steam.unlock(a.id); // no-op until Steamworks is live
           console.log('[achievements] unlocked '+a.id+' - '+(a.name));
@@ -193,6 +284,6 @@ else {
     server.listen(PORT,HOST,windowForGame);
     app.on('activate',()=>{if(!BrowserWindow.getAllWindows().length)windowForGame();});
   }).catch(err=>{crashLog('ready-failure',err && (err.stack||err.message));console.error(err);app.quit();});
-  app.on('window-all-closed',()=>{if(process.platform!=='darwin')app.quit();});
+  app.on('window-all-closed',()=>{if(process.platform!=='darwin'&&!restoringSave)app.quit();});
   app.on('before-quit',()=>{steam.shutdown();server?.close();});
 }

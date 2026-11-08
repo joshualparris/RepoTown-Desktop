@@ -1,0 +1,30 @@
+name: Steam edition live GitHub Pages browser verification
+on:
+  pull_request:
+  push:
+    branches: [main]
+    paths:
+      - 'tests/hosted-preview.mjs'
+      - '.github/workflows/verify-steam-pages.yml'
+  workflow_dispatch:
+  schedule:
+    - cron: '31 18 * * *'
+permissions:
+  contents: read
+jobs:
+  real-webgl-public-pages:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install test dependencies
+        run: npm install --no-audit --no-fund
+      - name: Install actual Chromium engine
+        run: npx playwright install --with-deps chromium
+      - name: Verify independently deployed public Steam preview, no third-party access
+        env:
+          PUBLIC_PLAY_URL: https://joshualparris.github.io/repository-town/steam-preview/
+        run: node tests/hosted-preview.mjs

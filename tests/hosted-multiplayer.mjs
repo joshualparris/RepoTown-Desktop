@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import {randomBytes} from 'node:crypto';
 import {chromium} from 'playwright';
-const url='https://repotown-desktop-preview.vercel.app/';
+const url=process.env.PUBLIC_PLAY_URL||'https://repotown-desktop-preview.vercel.app/';
 const suffix=randomBytes(4).toString('hex');
 const users=[
   {username:'steamqa_'+suffix+'a',password:randomBytes(20).toString('base64url')},
@@ -28,11 +28,20 @@ try{
     assert.equal(response.status(),200);
     await page.waitForFunction(()=>window.__town?.multiplayer &&
       document.getElementById('loading')?.hidden===true,null,{timeout:120000});
-    await page.locator('#btn-multiplayer').evaluate(e=>e.click());
+    const diagnostics=await page.evaluate(()=>({
+      page:location.href,mpButton:!!document.getElementById('btn-multiplayer'),
+      hud:!!document.getElementById('hud'),mpType:typeof window.__town?.multiplayer,
+      loadingHidden:document.getElementById('loading')?.hidden,ready:document.readyState
+    }));
+    console.log('Multiplayer UI preflight',JSON.stringify(diagnostics));
+    if(!diagnostics.mpButton)throw Error('Game loaded but multiplayer button missing: '+JSON.stringify({
+      ...diagnostics,pageErrors:user.errors
+    }));
+    await page.locator('#btn-multiplayer').evaluate(e=>e.click(),{timeout:60000});
     await page.locator('#rt-mp-username').fill(user.username);
     await page.locator('#rt-mp-password').fill(user.password);
     await page.locator('#rt-mp-register').click();
-    await page.waitForFunction(()=>window.__town.multiplayer().connected,null,{timeout:30000});
+    await page.waitForFunction(()=>window.__town.multiplayer().connected,null,{timeout:45000});
     assert.equal(await page.locator('#rt-mp-name').textContent(),user.username);
   }
   await Promise.all(users.map(u=>u.page.waitForFunction(()=>

@@ -1,13 +1,13 @@
 {
   "name": "repotown-desktop",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
-  "description": "Privacy-gated Steam development candidate",
+  "description": "Privacy-screened Repository Town desktop Steam playtest candidate",
   "main": "desktop/main.cjs",
   "scripts": {
     "start": "electron .",
     "audit:privacy": "node tools/privacy-gate.mjs game",
-    "verify:desktop": "node --check desktop/main.cjs && node --check desktop/preload.cjs && node --check desktop/steam.cjs && node --check desktop/achievements.cjs && node --check tools/privacy-gate.mjs && node --check tools/snapshot-public.mjs && node tools/verify-desktop.mjs",
+    "verify:desktop": "node --check desktop/main.cjs && node --check desktop/preload.cjs && node --check desktop/steam.cjs && node --check desktop/achievements.cjs && node --check desktop/progress.cjs && node --check desktop/overlay/first-day.js && node --check tools/privacy-gate.mjs && node --check tools/snapshot-public.mjs && node --check tools/steam-manifest.mjs && npm run test:progress && node tools/verify-desktop.mjs && npm run test:steam-gate && npm run test:gamepad && npm run test:offline",
     "package:windows": "electron-builder --win nsis zip --x64",
     "test:electron": "node tests/electron-smoke.mjs",
     "test:steam-ready": "npm run verify:desktop && npm run audit:privacy && node tests/steam-achievements.test.mjs",
@@ -15,7 +15,12 @@
     "steam:ready": "node tools/steam-readiness.mjs",
     "store:screenshots": "node tools/screenshots.mjs",
     "store:capsules": "node tools/capsules.mjs",
-    "test:desktop-achievements": "node tests/desktop-achievements.test.mjs"
+    "test:desktop-achievements": "node tests/desktop-achievements.test.mjs",
+    "test:progress": "node --test tests/progress.mjs",
+    "steam:gate": "node tools/steam-release-gate.mjs",
+    "test:steam-gate": "node --check tools/steam-release-gate.mjs",
+    "test:gamepad": "node --test tests/gamepad.mjs",
+    "test:offline": "node --test tests/offline-interactions.mjs"
   },
   "devDependencies": {
     "electron": "39.0.0",

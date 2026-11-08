@@ -4,6 +4,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
+import {fileURLToPath} from 'node:url';
+import {sanitiseOfflineContent} from './sanitise-interactions.mjs';
 const source=path.resolve(process.argv[2]||'upstream/repository-town/dist/public');
 const destination=path.resolve(process.argv[3]||'game');
 if(!fs.existsSync(path.join(source,'index.html'))||!fs.existsSync(path.join(source,'houses.json')))
@@ -52,7 +54,7 @@ function sanitise(body,rel){
   content=content.replace(/\b[a-z][a-z0-9_-]{2,}\b/gi,m=>blocked.has(hash(m))?'TownResident':m);
   if(rel==='index.html'){
     content=content.replace(/<script\b[^>]*\bsrc="ui\/analytics\.js"[^>]*><\/script>/gi,'');
-    content=content.replace(/<a\b[^>]*href="arcade\.html"[^>]*>.*?<\/a>/gi,'');
+    content=content.replace(/<a\b[^>]*href="(?:arcade|address-map|narromine-progress|narromine-compare|people)\.html"[^>]*>[\s\S]*?<\/a>/gi,'');
   }
   return redactLocationPhrases(content);
 }
@@ -115,9 +117,42 @@ world.houses=world.houses.map(h=>{
     }
   };
 });
-fs.writeFileSync(housesFile,JSON.stringify(world));
+const offline=sanitiseOfflineContent(world);
+fs.writeFileSync(housesFile,JSON.stringify(offline.world));
+console.log('Converted '+offline.converted+' unavailable remote exhibits and removed '+offline.removedLinks+' external links.');
 // Note: future checks must reject unexpected private property shapes.
 console.log('Replaced '+privateProperties+' private-repository-derived properties with fictional templates.');
+
+// Desktop-specific first-day onboarding is reviewed source, not imported from
+// personal upstream projects. Keep it deterministic across each export.
+const overlayDir=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../desktop/overlay');
+for(const name of ['first-day.js','first-day.css']){
+  const sourceFile=path.join(overlayDir,name);
+  if(!fs.existsSync(sourceFile))throw Error('Missing reviewed onboarding asset: '+name);
+  fs.copyFileSync(sourceFile,path.join(destination,'ui','desktop-'+name));
+  copied++;totalBytes+=fs.statSync(sourceFile).size;
+}
+// The Steam edition owns its controller-enabled input layer. Re-exporting
+// from the browser game's public build must not revert gamepad support.
+const reviewedInput=path.resolve(path.dirname(fileURLToPath(import.meta.url)),
+  '../desktop/overrides/input.js');
+if(!fs.existsSync(reviewedInput))throw Error('Missing reviewed Steam Input override');
+fs.copyFileSync(reviewedInput,path.join(destination,'engine','input.js'));
+const reviewedSavePage=path.join(overlayDir,'release.html');
+if(!fs.existsSync(reviewedSavePage))throw Error('Missing safe save-transfer page');
+fs.copyFileSync(reviewedSavePage,path.join(destination,'release.html'));
+copied++;totalBytes+=fs.statSync(reviewedSavePage).size;
+const htmlFile=path.join(destination,'index.html');
+const html=fs.readFileSync(htmlFile,'utf8');
+if(!html.includes('</head>'))throw Error('Missing HTML head; cannot install onboarding.');
+// Keep the required Settings control: main.js assigns onclick to this ID.
+// Replace the original target=_blank link with same-window, local-only backup.
+const safeHtml=html.replace(/<a\s+id="settings-save-transfer"[^>]*>[\s\S]*?<\/a>/gi,
+  '<a id="settings-save-transfer" class="btn-link" href="release.html">Back up or restore saved progress</a>');
+if(!safeHtml.includes('id="settings-save-transfer"'))throw Error('Required backup Settings control absent');
+fs.writeFileSync(htmlFile,safeHtml.replace('</head>',
+  '<link rel="stylesheet" href="ui/desktop-first-day.css">\n'+
+  '<script defer src="ui/desktop-first-day.js"></script>\n</head>'));
 
 // Metadata is non-sensitive and provides a provenance record for reproducible releases.
 fs.writeFileSync(path.join(destination,'desktop-export.json'),JSON.stringify({
