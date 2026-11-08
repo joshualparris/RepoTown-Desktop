@@ -53,7 +53,7 @@ async function openExternal(raw){
     // No automatic navigation from modifiable game data. Block local/private
     // services, username-bearing URLs, custom schemes and unsafe protocols.
     if(u.protocol!=='https:'||u.username||u.password||u.hostname==='localhost'||
-      u.hostname.endsWith('.local')||/^(\\d+\\.){3}\\d+$/.test(u.hostname))return;
+      u.hostname.endsWith('.local')||/^(\d+\.){3}\d+$/.test(u.hostname))return;
     const confirm=await dialog.showMessageBox(currentWindow||undefined,{
       type:'question',title:'Open a website?',message:'Open this external website?',
       detail:u.origin,buttons:['Cancel','Open browser'],defaultId:0,cancelId:0,noLink:true
