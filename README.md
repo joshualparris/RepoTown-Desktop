@@ -4,6 +4,12 @@
 
 This repository is intentionally **separate from the live web game and its development history**. Its purpose is to develop, test, and eventually publish a privacy-safe Windows desktop edition of Repository Town through Steam.
 
+## Play the game
+
+- **[Play the browser preview](https://repotown-desktop-preview.vercel.app/)** — public, no Steam installation required. This copy is built from the privacy-screened desktop game snapshot; best tried on a laptop or desktop.
+- **[Download the verified Windows playtest build](https://github.com/joshualparris/RepoTown-Desktop/releases)** — select the latest Windows *prerelease*, download the ZIP, extract it, and launch `Repository Town.exe`. No Steam account is required. It has passed an actual packaged Electron game-load and local-storage-reload test.
+- **Status:** playable development build, **not** a released Steam product. Steamworks onboarding, commercial asset rights, a complete shared-world simulation, and gameplay polish are still required.
+
 ## Privacy-first source policy
 - Never fork, mirror, submodule, or import the original repository's Git history.
 - The game snapshot must be generated from the upstream **sanitised public build** only, not from original briefs, personal/project databases, private builds, audit logs, credentials, or entire source directories.
