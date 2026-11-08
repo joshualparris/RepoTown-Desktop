@@ -56,8 +56,25 @@ check('>= 10 achievements', ACHIEVEMENTS.length >= 10, ACHIEVEMENTS.length + ' d
 check('>= 10 offline-reachable achievements', ACHIEVEMENTS.filter(a => !['GOING_PUBLIC', 'PLAY_TOGETHER'].includes(a.id)).length >= 10, '');
 
 // --- 5. store assets (dims verified when images exist) ---
-const dims = async (p) => { // PNG header parse: width at offset 16, height 20
-  try { const b = fs.readFileSync(path.join(root, p)); return { w: b.readUInt32BE(16), h: b.readUInt32BE(20) }; } catch { return null; }
+const dims = async (p) => {
+  try {
+    const b=fs.readFileSync(path.join(root,p));
+    if(b.subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10])))
+      return {w:b.readUInt32BE(16),h:b.readUInt32BE(20)};
+    if(b[0]===0xff && b[1]===0xd8){
+      let i=2;
+      while(i<b.length-10){
+        if(b[i]!==0xff){i++;continue;}
+        const marker=b[i+1];
+        if([0xc0,0xc1,0xc2,0xc3,0xc5,0xc6,0xc7,0xc9,0xca,0xcb].includes(marker))
+          return {w:b.readUInt16BE(i+7),h:b.readUInt16BE(i+5)};
+        const len=b.readUInt16BE(i+2);
+        if(!len||len>b.length-i)break;
+        i+=len+2;
+      }
+    }
+    return null;
+  }catch{return null;}
 };
 const assetSpecs = [
   ['store/capsules/header.png',920,430],
