@@ -18,6 +18,9 @@ const exists = p => { try { return fs.statSync(path.join(root, p)).isFile(); } c
 const pkg = JSON.parse(read('package.json'));
 check('version is semver and bumped for release', /^\d+\.\d+\.\d+$/.test(pkg.version), pkg.version);
 check('electron-builder config present', !!pkg.build, '');
+const electronMajor=Number(String(pkg.devDependencies?.electron||'').split('.')[0]);
+check('supported Electron runtime (43+ at 2026-11-08)',electronMajor>=43,
+  pkg.devDependencies?.electron||'not pinned');
 check('appId set (Steam needs a stable one)', !!pkg.build?.appId, pkg.build?.appId || '');
 check('productName set', !!pkg.build?.productName, pkg.build?.productName || '');
 check('Windows installer target (NSIS)', (pkg.build?.win?.target || []).some(t => (typeof t === 'string' ? t : t.target) === 'nsis'), JSON.stringify(pkg.build?.win?.target));
