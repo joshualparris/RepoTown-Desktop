@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Repository Town · Saved progress</title>
+<style>
+body{font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;background:#10231c;color:#e8f0eb;max-width:720px;margin:36px auto;padding:0 22px}
+a{color:#b1e4cd}button,input{font:inherit;margin:8px 8px 8px 0;padding:8px}
+section{border-top:1px solid #476353;padding-top:16px;margin-top:26px}
+button:focus-visible,input:focus-visible{outline:3px solid #f9d583;outline-offset:2px}
+#message{white-space:pre-wrap}
+</style>
+</head>
+<body>
+<h1>Repository Town</h1>
+<p><a href="./">Return to the game</a></p>
+<p id="version">This is a local-only save transfer page.</p>
+<section>
+<h2>Back up or restore your saved game</h2>
+<p>Your town progress is saved on this device. Export a backup regularly, especially before moving between computers or game versions.</p>
+<button id="export" type="button">Download saved progress</button>
+<p><label>Choose a Repository Town save file <input id="file" type="file" accept="application/json,.json"></label></p>
+<button id="import" type="button" disabled>Back up current progress and import</button>
+<p>Importing replaces supported game progress on this device and downloads a backup first. Login credentials, private chats and unrelated browser storage are excluded. Close other game tabs before importing.</p>
+<p id="message" role="status" aria-live="polite"></p>
+</section>
+<script type="module" src="ui/save-transfer.js"></script>
+</body>
+</html>
