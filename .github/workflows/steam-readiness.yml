@@ -47,6 +47,8 @@ jobs:
         run: npx playwright install chromium --with-deps || npx playwright install chromium
       - name: Shell syntax, privacy gate and achievement tests
         run: npm run test:steam-ready
+      - name: Verify optional Steamworks client achievement API without publisher credentials
+        run: npm run test:steam-bridge
       - name: Regenerate capsule artwork (dimension check)
         run: npm run store:capsules
       - name: Steam readiness gate (build config, assets, integration surface)
