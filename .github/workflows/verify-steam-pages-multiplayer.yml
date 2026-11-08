@@ -1,0 +1,24 @@
+name: GitHub Pages Steam multiplayer real-browser playtest
+on:
+  pull_request:
+    paths:
+      - 'tests/hosted-multiplayer.mjs'
+      - '.github/workflows/verify-steam-pages-multiplayer.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  two-separate-player-accounts:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-audit --no-fund
+      - run: npx playwright install --with-deps chromium
+      - name: Test account registration, two visible players, disconnect and logout on public Pages
+        env:
+          PUBLIC_PLAY_URL: https://joshualparris.github.io/repository-town/steam-preview/
+        run: node tests/hosted-multiplayer.mjs

@@ -1,7 +1,7 @@
 // Validate the actual public play URL, independent of the Electron/localhost build.
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
-const url=process.env.PUBLIC_PLAY_URL||'https://repotown-desktop-preview.vercel.app/';
+const url=process.env.PUBLIC_PLAY_URL||'https://joshualparris.github.io/repository-town/steam-preview/';
 const base=new URL(url);
 const browser=await chromium.launch({args:['--use-angle=swiftshader','--enable-unsafe-swiftshader']});
 try{
