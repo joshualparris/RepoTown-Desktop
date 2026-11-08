@@ -1,0 +1,25 @@
+name: Verify public desktop preview is playable
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  webgl-preview:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install test dependencies
+        run: npm install --no-audit --no-fund
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run live preview startup test
+        env:
+          PUBLIC_PLAY_URL: https://repotown-desktop-preview.vercel.app/
+        run: node tests/hosted-preview.mjs
