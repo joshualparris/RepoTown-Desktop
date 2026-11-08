@@ -1,0 +1,147 @@
+/* Shared NPC overlay and mobile-first, WebGL-free character lounge. */
+[hidden]{display:none!important}
+.visually-hidden{position:absolute!important;width:1px;height:1px;clip:rect(0,0,0,0);overflow:hidden;white-space:nowrap}
+#npc-roster,#npc-chat{color:#f6f9ff;background:#121f35f7;border:1px solid #6b8ba9;border-radius:16px;box-shadow:0 18px 70px #0008;font:14px/1.45 system-ui,sans-serif}
+#npc-roster{position:fixed;left:12px;top:210px;width:min(325px,calc(100vw - 24px));max-height:60dvh;overflow:auto;z-index:35;padding:14px}
+#npc-roster .npc-roster-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+#npc-roster p{color:#bdcde0;margin:6px 0 12px}
+#npc-roster-items{display:grid;grid-template-columns:1fr;gap:5px}
+.npc-roster-item{padding:10px 12px;text-align:left;background:#233956;border:1px solid #4d6b8f;border-radius:10px;color:#f8faff;font-size:13px;min-height:42px;white-space:normal;cursor:pointer}
+.npc-roster-item:hover,.npc-roster-item:focus-visible{border-color:#84defe;background:#2c5173}
+#npc-chat{position:fixed;right:max(12px,env(safe-area-inset-right));bottom:max(12px,env(safe-area-inset-bottom));z-index:42;width:min(475px,calc(100vw - 24px));height:min(630px,82dvh);display:flex;flex-direction:column;overflow:hidden}
+#npc-chat button,#npc-roster button{cursor:pointer;color:#fff}
+.npc-chat-top{display:flex;align-items:center;gap:10px;padding:14px 15px;background:#1d344f}
+#npc-avatar{font-size:34px;width:48px;height:48px;display:grid;place-items:center;background:#324f73;border-radius:14px}
+.npc-chat-top div{min-width:0;flex:1}
+#npc-name{font-size:18px;line-height:1.25;margin:0}
+#npc-role{font-size:12px;color:#b7daf5;margin:3px 0 0}
+#npc-close{border-radius:8px;border:1px solid #6d829e;background:#2c405e;padding:8px 13px;font-size:18px}
+#npc-messages{flex:1;min-height:80px;overflow-y:auto;padding:16px 12px 8px;display:flex;flex-direction:column;gap:10px;overscroll-behavior:contain}
+.npc-line{display:flex;justify-content:flex-start}
+.npc-line.user{justify-content:flex-end}
+.npc-bubble{max-width:90%;white-space:pre-wrap;overflow-wrap:anywhere;border-radius:15px 15px 15px 3px;padding:10px 13px;background:#294662;line-height:1.5}
+.npc-line.user .npc-bubble{background:#166e74;border-radius:15px 15px 3px 15px}
+#npc-status{margin:0;padding:5px 14px;font-size:11px;color:#d0ddea;min-height:24px}
+.npc-access{display:flex;align-items:center;gap:8px;padding:3px 12px 10px}
+.npc-access label{font-size:11px;min-width:108px}
+#npc-code{flex:1;width:20px;min-width:0;padding:8px;background:#0c1a2c;color:#fff;border:1px solid #476681;border-radius:8px}
+#npc-form{display:flex;gap:8px;padding:0 12px 10px}
+#npc-input{flex:1;width:20px;min-width:0;min-height:44px;border-radius:10px;padding:10px 12px;background:#f5f9fc;color:#102034;border:1px solid #89a6c0}
+#npc-send{background:#246b77;border:1px solid #86cfe0;color:white;border-radius:10px;padding:8px 14px;min-height:44px}
+#npc-chat small{display:block;padding:0 14px 12px;color:#b1c1d2;font-size:10px}
+#npc-chat button:focus-visible,#npc-chat input:focus-visible,#npc-roster button:focus-visible{outline:2px solid #98e3ff;outline-offset:2px}
+@media(max-width:700px){
+ #npc-roster{left:6px;top:max(6px,env(safe-area-inset-top));max-height:65dvh}
+ #npc-chat{inset:max(6px,env(safe-area-inset-top)) 6px max(6px,env(safe-area-inset-bottom)) 6px;width:auto;height:auto;max-height:none}
+ #npc-chat .npc-access{padding-bottom:6px}
+ #npc-messages{min-height:0}
+}
+/* The lounge loads even on devices without WebGL. */
+body.npc-lounge{margin:0;min-height:100dvh;overflow:auto;background:radial-gradient(circle at 20% 10%,#1f4360,#0c1829 65%);color:#eff8ff;font:15px/1.5 system-ui,sans-serif}
+.npc-lounge-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px max(16px,4vw);background:#101e32}
+.npc-lounge-header a{color:#9beaff;text-decoration:none}
+.npc-lounge-header strong{font-size:18px}
+.npc-lounge-intro{padding:28px 24px 6px;max-width:1150px;margin:auto}
+.npc-lounge-intro h1{font-size:clamp(25px,4vw,42px);margin:0 0 5px}
+.npc-lounge-intro p{max-width:680px;color:#b8cadc;margin:0}
+body.npc-lounge #npc-roster{position:relative;top:auto;left:auto;margin:20px 0;width:100%;max-height:calc(100dvh - 210px);max-width:none}
+body.npc-lounge #npc-roster-items{grid-template-columns:repeat(2,minmax(0,1fr))}
+body.npc-lounge #npc-chat{position:relative;top:auto;bottom:auto;left:auto;right:auto;margin:20px 0;width:100%;height:calc(100dvh - 210px);min-height:490px}
+.npc-lounge-layout{display:grid;grid-template-columns:minmax(250px,360px) minmax(330px,700px);gap:18px;align-items:start;max-width:1150px;margin:0 auto;padding:0 24px}
+body.npc-lounge #npc-roster-close,body.npc-lounge #npc-close{display:none}
+@media(max-width:730px){.npc-lounge-layout{display:flex;flex-direction:column;gap:0;padding:0 10px}.npc-lounge-intro{padding:16px}.npc-lounge-header{padding:12px 14px}body.npc-lounge #npc-roster{margin:12px 0 0;max-height:none}body.npc-lounge #npc-roster-items{grid-template-columns:repeat(2,minmax(0,1fr))}body.npc-lounge #npc-chat{margin:12px 0 20px;height:70dvh;min-height:450px}body.npc-lounge .npc-roster-item{font-size:12px;padding:8px}}
+
+
+/* The expanded cast comes with its own no-API quests and conversation prompts. */
+#npc-roster-search{width:100%;margin:4px 0 6px;padding:10px 12px;color:#102034;background:#f6fbff;border:1px solid #6ca1b6;border-radius:10px;font:inherit;min-height:42px}
+#npc-quest-count{color:#f5d38c!important;font-size:12px;font-weight:600}
+.npc-activities{border-top:1px solid #38516b;padding:7px 12px 8px;max-height:210px;overflow-y:auto;overscroll-behavior:contain}
+.npc-activity-label{font-size:11px;color:#aec6da;display:block;margin-bottom:5px}
+.npc-prompt-row{display:flex;flex-wrap:wrap;gap:6px}
+.npc-suggestion{border:1px solid #486f83;background:#233c58;border-radius:16px;padding:5px 9px;min-height:32px;font-size:12px;text-align:left;color:#e9fcff;cursor:pointer}
+.npc-suggestion:hover{background:#375b7b}
+.npc-quest-area{margin-top:8px}
+.npc-quest-toggle{width:100%;border:1px solid #8aab75;border-radius:9px;padding:9px 11px;background:#284f38;color:#faffef;font-weight:600;text-align:left;cursor:pointer}
+.npc-quest{border:1px solid #577788;background:#192c41;border-radius:12px;padding:10px;margin-top:7px}
+.npc-quest p{margin:0 0 7px}
+.npc-quest-choices{display:flex;gap:6px;flex-wrap:wrap}
+.npc-quest-choices button,.npc-quest-retry{min-height:36px;border-radius:9px;border:1px solid #779bb1;background:#315171;color:#fff;padding:7px 10px;cursor:pointer}
+.npc-quest-choices button:disabled{opacity:.5;cursor:default}
+.npc-quest-result{color:#cfeebb;margin-top:9px!important;font-size:13px}
+.npc-quest-retry{margin-top:5px}
+@media(max-width:700px){.npc-activities{max-height:23dvh}.npc-prompt-row{flex-wrap:nowrap;overflow-x:auto}.npc-suggestion{flex:0 0 auto;max-width:190px;white-space:normal}}
+
+/* Keep the character picker usable alongside chat when the cast grows. */
+body.npc-lounge #npc-roster-items{max-height:min(580px,calc(100dvh - 295px));overflow-y:auto;overscroll-behavior:contain;padding-right:4px}
+@media(max-width:730px){body.npc-lounge #npc-roster-items{max-height:205px}body.npc-lounge #npc-chat{scroll-margin-top:8px}}
+
+/* NPC keyboard-aware layout. The compositor stays visible above Android IME. */
+#npc-chat,#npc-chat *{box-sizing:border-box}
+#npc-messages{flex:1 1 auto;min-height:0;overscroll-behavior:contain}
+#npc-form{flex:0 0 auto;position:sticky;bottom:0;z-index:1;margin:0;padding:10px 12px max(10px,env(safe-area-inset-bottom));background:#101f34;border-top:1px solid #496078}
+#npc-chat.npc-typing .npc-access,
+#npc-chat.npc-typing .npc-activities,
+#npc-chat.npc-typing small{display:none}
+/* Keep response status announcements accessible without consuming keyboard space. */
+#npc-chat.npc-typing #npc-status{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+#npc-chat.npc-typing .npc-chat-top{padding:7px 10px}
+#npc-chat.npc-typing #npc-avatar{width:34px;height:34px;font-size:24px}
+#npc-chat.npc-typing #npc-role{display:none}
+@media(max-width:700px){
+  #npc-chat{
+    position:fixed;
+    inset:auto max(6px,env(safe-area-inset-right)) auto max(6px,env(safe-area-inset-left));
+    top:calc(var(--npc-top,0px) + max(6px,env(safe-area-inset-top)));
+    width:auto;
+    height:calc(var(--npc-vh,100dvh) - max(6px,env(safe-area-inset-top)) - max(6px,env(safe-area-inset-bottom)));
+    max-height:calc(var(--npc-vh,100dvh) - max(6px,env(safe-area-inset-top)) - max(6px,env(safe-area-inset-bottom)));
+    min-height:0;
+  }
+  /* The WebGL-free lounge normally stays in document flow, but becomes
+     a compact overlay while writing to an NPC so the keyboard cannot cover it. */
+  body.npc-lounge #npc-chat.npc-typing{
+    position:fixed;z-index:52;margin:0;left:max(6px,env(safe-area-inset-left));
+    right:max(6px,env(safe-area-inset-right));
+    top:calc(var(--npc-top,0px) + max(6px,env(safe-area-inset-top)));
+    bottom:auto;width:auto;
+    height:calc(var(--npc-vh,100dvh) - max(6px,env(safe-area-inset-top)) - max(6px,env(safe-area-inset-bottom)));
+    max-height:calc(var(--npc-vh,100dvh) - max(6px,env(safe-area-inset-top)) - max(6px,env(safe-area-inset-bottom)));
+    min-height:0;
+  }
+  body.npc-lounge #npc-chat.npc-typing #npc-close{display:block}
+}
+
+/* Static GitHub Pages builds cannot host the private Groq API. */
+.npc-host-notice{margin:0;padding:9px 12px;border-top:1px solid #38516b;background:#172d42;color:#e4eff8;font-size:13px;line-height:1.4;flex:0 0 auto}
+.npc-host-notice a{color:#b5edff;text-decoration:underline;font-weight:650}
+#npc-chat.npc-typing .npc-host-notice{display:none}
+
+/* Explicit listen action: speech is never automatic and must not cover text. */
+.town-voice-button{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;gap:4px;min-height:36px;min-width:78px;margin:4px 2px;padding:5px 9px;border:1px solid #72b6ce;border-radius:999px;background:#173c51;color:#fff;font:inherit;font-size:12px;font-weight:750;cursor:pointer;touch-action:manipulation;white-space:nowrap}
+.town-voice-button:focus-visible{outline:3px solid #fbd67e;outline-offset:2px}
+.town-voice-button[aria-pressed="true"]{background:#714524;border-color:#efbf68}
+.npc-line .town-voice-button{align-self:flex-end}
+.chat-log .town-voice-button{vertical-align:middle;margin-left:8px}
+.yarn-line .town-voice-button{margin-top:6px}
+@media(max-width:480px){.npc-line{flex-wrap:wrap}.npc-line .town-voice-button{margin-left:auto}}
+
+/* Contextual recordings live beneath the matching NPC line, not over the 3D game. */
+.npc-line .npc-recorded-cue{display:flex;flex-wrap:wrap;align-items:center;gap:3px;width:100%;max-width:100%;min-width:0;padding:2px 0}
+.npc-line .npc-recorded-cue-button{margin:2px 0;min-width:0;max-width:100%;white-space:normal;text-align:center}
+.npc-line .npc-recorded-caption{flex-basis:100%;max-width:100%;min-width:0;overflow-wrap:anywhere;white-space:normal;margin:0 0 2px}
+
+
+/* Player-led, prerecorded NPC conversations. Works in the 3D modal and lounge. */
+.npc-recorded-conversation{min-width:0;max-width:100%;margin:9px 0;padding:10px;border:1px solid #547994;border-radius:12px;background:#142a41;color:#ebf7ff}
+.npc-recorded-conversation h3{font-size:14px;margin:0 0 5px}
+.npc-recorded-conversation .npc-activity-label{font-size:12px;line-height:1.35}
+.npc-recorded-conversation-choices{display:flex;gap:7px;flex-wrap:wrap;max-width:100%}
+.npc-recorded-conversation-choices .npc-recorded-choice{flex:1 1 135px;max-width:100%;min-height:44px;white-space:normal;text-align:left;padding:8px 10px}
+.npc-recorded-choice:disabled{opacity:.55;cursor:default}
+.npc-recorded-conversation-subtitle{font-size:13px;line-height:1.45;overflow-wrap:anywhere;white-space:normal;margin:10px 0 6px;min-height:1.5em}
+.npc-recorded-conversation-controls{display:flex;gap:8px;flex-wrap:wrap}
+.npc-recorded-conversation-controls button{font:inherit;font-size:12px;border:1px solid #729db6;border-radius:8px;min-height:44px;background:#28465d;color:#fff;padding:8px 10px;cursor:pointer}
+.npc-recorded-conversation button:focus-visible{outline:3px solid #fbd67e;outline-offset:2px}
+.npc-recorded-conversation button:disabled{opacity:.5;cursor:default}
+@media(max-width:700px){.npc-recorded-conversation-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.npc-recorded-conversation-choices .npc-recorded-choice{min-width:0;width:100%;max-width:100%}.npc-recorded-conversation{padding:9px}}
+@media(max-width:330px){.npc-recorded-conversation-choices{grid-template-columns:minmax(0,1fr)}}

@@ -1,0 +1,98 @@
+/* Vehicle HUD appears only while driving. Mobile position avoids joystick, Use, map and minimap. */
+#driving-dashboard{
+ position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:12;
+ width:min(550px,calc(100vw - 24px));padding:9px 12px 10px;
+ border:1px solid #6a8095;border-radius:17px;
+ color:#eff8ff;background:linear-gradient(160deg,rgba(11,21,35,.96),rgba(21,37,54,.95));
+ box-shadow:0 7px 28px #0009;font:12px/1.35 system-ui,sans-serif;
+ font-variant-numeric:tabular-nums;backdrop-filter:blur(8px);
+}
+#driving-dashboard[hidden]{display:none!important}
+.drive-dash-heading{display:flex;gap:8px;align-items:center;justify-content:space-between;border-bottom:1px solid #ffffff20;padding-bottom:5px;margin-bottom:7px}
+#drive-model{font-size:12px;letter-spacing:.07em;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#drive-engine-status{font-size:10px;letter-spacing:.1em;color:#a9e9bc;margin-left:auto;white-space:nowrap}
+#drive-dash-size{padding:3px 7px;min-height:27px;font-size:11px;border-color:#63788b;flex:none}
+.drive-dash-gauges{display:grid;grid-template-columns:1.16fr 1fr 1fr;gap:11px;align-items:center}
+.drive-dash-speed{border:1px solid #506b83;background:radial-gradient(ellipse at 50% 10%,#264359,#13202d 80%);border-radius:12px;text-align:center;padding:3px 6px 6px;min-width:0}
+.drive-speed-value{display:flex;align-items:baseline;justify-content:center;gap:4px}
+#drive-speed{font-size:clamp(35px,7vw,53px);font-weight:750;letter-spacing:-.05em;line-height:1.12}
+.drive-unit{font-size:11px;color:#bdd6e8}
+.drive-subline{display:flex;justify-content:space-around;gap:5px;color:#c0d4e2;font-size:10px}
+#drive-gear{background:#d7e6f2;color:#14243a;border-radius:4px;min-width:20px}
+.drive-dash-meter{min-width:0}
+.drive-meter-heading{display:flex;justify-content:space-between;gap:5px;flex-wrap:wrap;align-items:center}
+.drive-meter-heading>span{font-size:10px;letter-spacing:.04em;color:#c4d5e4}
+.drive-meter-heading output{font-size:14px;font-weight:700;white-space:nowrap}
+.drive-meter-track{height:13px;background:#101c2b;border:1px solid #547086;border-radius:7px;overflow:hidden;margin:8px 0 3px}
+.drive-meter-fill{height:100%;width:0;background:linear-gradient(90deg,#d5a44d,#94cf65,#68d7a1);transition:width .18s linear}
+#drive-temp-fill{background:linear-gradient(90deg,#7aaee0,#77cca6,#d7b357)}
+.drive-dash-meter small{display:block;font-size:10px;color:#bccddb}
+.drive-dash-meter.warning .drive-meter-heading output,.drive-dash-meter.warning small{color:#ffb883}
+.drive-dash-meter.warning .drive-meter-fill{background:#f38d53!important}
+.drive-dash-footer{display:flex;align-items:center;gap:10px;margin-top:8px;border-top:1px solid #ffffff1c;padding-top:8px}
+.drive-odo{display:flex;gap:5px;align-items:center;flex:0 0 auto;font-size:11px}
+.drive-odo span{color:#91b7d0}
+.drive-odo output{font-weight:700}
+.drive-odo small{font-size:10px;color:#9bacbf}
+.drive-radio{display:flex;gap:4px;align-items:center;justify-content:flex-end;flex:1;min-width:0}
+.drive-radio button{min-height:32px;padding:5px 7px;border-radius:7px;background:#26445c;border-color:#7898ab}
+#drive-radio-power{white-space:nowrap;font-size:11px}
+#drive-radio-prev,#drive-radio-next{width:31px;min-width:31px;font-size:20px;line-height:1;padding:3px}
+#drive-radio-station{min-width:65px;max-width:120px;flex:1;text-align:center;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.drive-volume-label{font-size:10px;color:#c4d5e4}
+#drive-radio-volume{appearance:auto;accent-color:#77c9e6;cursor:pointer;touch-action:pan-x;min-width:52px;width:66px;height:24px;padding:0;border:0;background:none}
+#driving-dashboard.compact .drive-dash-meter,#driving-dashboard.compact #drive-rpm,#driving-dashboard.compact .drive-odo{display:none}
+#driving-dashboard.compact .drive-dash-gauges{display:block;width:125px;margin:0 auto}
+#driving-dashboard.compact .drive-dash-footer{border-top:0;padding-top:4px}
+body.playing #driving-dashboard{display:none!important}
+@media (pointer:coarse),(max-width:700px){
+ #driving-dashboard{bottom:clamp(225px,34dvh,440px);width:calc(100vw - 22px);max-width:480px;padding:7px 10px}
+ .drive-dash-gauges{gap:8px}
+ #drive-speed{font-size:clamp(31px,8vw,47px)}
+ .drive-dash-footer{display:block;padding-top:6px;margin-top:6px}
+ .drive-odo{justify-content:center;margin-bottom:5px}
+ .drive-radio{justify-content:center}
+ .drive-radio button{min-height:37px}
+ #drive-radio-station{max-width:114px}
+ #drive-radio-volume{min-width:60px}
+ #drive-dash-size{min-height:29px}
+}
+@media(max-width:350px){
+ #driving-dashboard{padding:6px}
+ .drive-dash-gauges{gap:5px}
+ .drive-meter-heading output{font-size:12px}
+ .drive-odo small{display:none}
+ #drive-radio-station{max-width:80px}
+ #drive-radio-volume{width:48px;min-width:48px}
+}
+
+/* Separate Show/Hide button remains usable while driving, even when panel is hidden. */
+/* Top-left, under the HUD bar: the top-right corner belongs to the compass and minimap. */
+#drive-dash-toggle,#drive-lane-toggle{
+ position:fixed;top:max(92px,calc(env(safe-area-inset-top) + 75px));left:max(12px,env(safe-area-inset-left));
+ z-index:13;min-height:42px;padding:8px 12px;border-radius:12px;
+ font-size:12px;font-weight:700;letter-spacing:.01em;
+ color:#f3f9fc;background:#18364beF;border:1px solid #83b2cb;box-shadow:0 4px 12px #0008;
+}
+#drive-lane-toggle{top:max(142px,calc(env(safe-area-inset-top) + 125px))}
+#drive-lane-toggle[aria-pressed=true]{background:#1f5a34ef;border-color:#8fd3a3}
+#drive-dash-toggle[hidden],#drive-lane-toggle[hidden]{display:none!important}
+#drive-dash-toggle:focus-visible{outline:3px solid #ffe089;outline-offset:2px}
+body.playing #drive-dash-toggle,body.playing #drive-lane-toggle{display:none!important}
+@media (pointer:coarse),(max-width:700px){
+ #drive-lane-toggle{top:max(169px,calc(env(safe-area-inset-top) + 159px));min-height:44px;padding:8px 10px;font-size:11px;max-width:130px}
+ #drive-dash-toggle{top:max(117px,calc(env(safe-area-inset-top) + 107px));left:max(12px,env(safe-area-inset-left));
+  min-height:44px;padding:8px 10px;font-size:11px;max-width:130px}
+}
+
+/* Very short phone screens cannot fit the full instrument card AND both
+   left-hand driving buttons. Keep the card below those buttons and above
+   the bottom minimap; scroll gauges/radio rather than bury the compass
+   or hide the Show dashboard control. Normal-height phones unchanged. */
+@media (max-width:700px) and (max-height:650px){
+ #driving-dashboard{
+  max-height:max(40px,calc(100dvh - 450px));
+  overflow-y:auto;
+  overscroll-behavior:contain;
+ }
+}

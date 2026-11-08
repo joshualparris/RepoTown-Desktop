@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "kind": "sanitised-runtime-only",
+  "releaseType": "development",
+  "intentionallyExcluded": [
+    "original Git history",
+    "raw game briefs",
+    "private data",
+    "arcade projects",
+    "audio recordings",
+    "admin tools",
+    "analytics"
+  ],
+  "files": 524,
+  "bytes": 19599498,
+  "sourceBuild": "upstream public release only"
+}

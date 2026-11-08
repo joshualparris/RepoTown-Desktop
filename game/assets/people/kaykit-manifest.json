@@ -1,0 +1,69 @@
+{
+  "license": "CC0-1.0",
+  "author": "Kay Lousberg / KayKit",
+  "source": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0",
+  "sourceCommit": "672074b73ba276876a19e8816ecdc5241817ab47",
+  "implementation": "Five identical-rig fantasy/storybook bodies, no carried weapons. Only Knight stores shared animation clips.",
+  "bodyAssets": [
+    {
+      "name": "Knight",
+      "file": "kaykit-knight.glb",
+      "bytes": 534592,
+      "sourceBytes": 3659532,
+      "keptAnimations": [
+        "Idle",
+        "Talk",
+        "Run",
+        "Sit",
+        "Walk"
+      ],
+      "removedWeaponNodes": 0,
+      "skins": 1
+    },
+    {
+      "name": "Barbarian",
+      "file": "kaykit-barbarian.glb",
+      "bytes": 319456,
+      "sourceBytes": 3613268,
+      "keptAnimations": [],
+      "removedWeaponNodes": 0,
+      "skins": 1
+    },
+    {
+      "name": "Mage",
+      "file": "kaykit-mage.glb",
+      "bytes": 307520,
+      "sourceBytes": 3589240,
+      "keptAnimations": [],
+      "removedWeaponNodes": 0,
+      "skins": 1
+    },
+    {
+      "name": "Rogue",
+      "file": "kaykit-rogue.glb",
+      "bytes": 326876,
+      "sourceBytes": 3616284,
+      "keptAnimations": [],
+      "removedWeaponNodes": 0,
+      "skins": 1
+    },
+    {
+      "name": "Rogue_Hooded",
+      "file": "kaykit-rogue-hooded.glb",
+      "bytes": 308452,
+      "sourceBytes": 3597652,
+      "keptAnimations": [],
+      "removedWeaponNodes": 0,
+      "skins": 1
+    }
+  ],
+  "sharedAnimationsFile": "kaykit-knight.glb",
+  "sharedClips": [
+    "Idle",
+    "Talk",
+    "Run",
+    "Sit",
+    "Walk"
+  ],
+  "totalBytes": 1796896
+}

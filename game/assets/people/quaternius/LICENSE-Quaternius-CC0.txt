@@ -1,0 +1,15 @@
+Resident models used by Settings → Resident style.
+
+mannequin.glb — Quaternius "Universal Animation Library" (Standard), mannequin and ten of its
+animations (walk, formal walk, idle, talking, sitting, sitting and talking, driving, pick up,
+interact, jog). Trimmed for the web: unused animations removed; per-bone scale and translation
+keyframes removed except on the root and hips.
+
+casual.glb — Quaternius "Casual_Female" character with its seventeen animations, unchanged.
+
+Models by @Quaternius — https://quaternius.com — https://www.patreon.com/quaternius
+
+License:
+CC0 1.0 Universal (CC0 1.0)
+Public Domain Dedication
+https://creativecommons.org/publicdomain/zero/1.0/

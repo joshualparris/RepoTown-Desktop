@@ -1,0 +1,255 @@
+:root { --panel: #101a2cee; --line: #8197b7; --ink: #fff; --accent: #7fe0ff; }
+#town-activity { display:block; width:100%; min-height:44px; margin-top:8px; padding:8px 10px; font:inherit; color:var(--ink); background:#1d344d; border:1px solid var(--line); border-radius:8px; }
+#town-activity:focus-visible { outline:3px solid var(--accent); outline-offset:2px; }
+[hidden] { display: none !important; }
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: #90c8ef; color: var(--ink); font: 14px/1.4 system-ui, sans-serif; }
+canvas#scene { display: block; width: 100vw; height: 100dvh; touch-action: none; }
+button, input { font: inherit; color: var(--ink); background: #1d344d; border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; }
+button { cursor: pointer; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+button[aria-pressed="true"] { background: #2f6b8c; border-color: var(--accent); }
+button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+#loading { position: fixed; inset: 0; z-index: 50; display: grid; place-content: center; text-align: center; background: #13233a; }
+#loading.error { background: #5a1f25; }
+#hud { position: fixed; top: max(10px, env(safe-area-inset-top)); left: 10px; z-index: 10; background: var(--panel); padding: 10px; border-radius: 12px; max-width: min(360px, calc(100vw - 20px)); }
+#hud h1 { font-size: 17px; margin: 0; }
+.hud-heading { display:flex; align-items:center; justify-content:space-between; gap:9px; }
+.hud-title-short { display:none; }
+#btn-hud-toggle { font-size:23px; font-weight:700; padding:0; width:38px; height:38px; min-width:38px; display:grid; place-items:center; line-height:1; border-radius:9px; flex-shrink:0; }
+#hud-details { margin-top:6px; }
+#hud.hud-minimised { width:max-content; max-width:calc(100vw - 20px); padding:5px 6px 5px 10px; border:1px solid #66819d; }
+#hud.hud-minimised #hud-details { display:none; }
+#hud.hud-minimised h1 { font-size:14px; white-space:nowrap; }
+#hud.hud-minimised .hud-heading { gap:9px; }
+#hud.hud-minimised .hud-title-full { display:none; }
+#hud.hud-minimised .hud-title-short { display:inline; }
+#hud.hud-minimised #btn-hud-toggle { width:38px; height:38px; min-width:38px; font-size:21px; }
+#hud #btn-hud-toggle:focus-visible { outline:3px solid var(--accent); outline-offset:2px; }
+
+#search-form { display: flex; gap: 6px; }
+#search { flex: 1; min-width: 0; }
+.row { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+#status { margin: 6px 0 0; font-size: 12px; opacity: .85; min-height: 1em; }
+#card { position: fixed; left: 10px; bottom: 10px; z-index: 9; background: var(--panel); padding: 12px; border-radius: 12px; max-width: min(380px, calc(100vw - 20px)); }
+#card h2 { margin: 0 0 4px; font-size: 16px; }
+#card .kind { color: var(--accent); margin: 0 0 6px; }
+#card a, #panel a { color: var(--accent); }
+#prompt { position: fixed; left: 50%; bottom: 22%; transform: translateX(-50%); z-index: 9; background: #000a; padding: 8px 14px; border-radius: 20px; pointer-events: none; white-space: nowrap; }
+#panel, #help, #settings { position: fixed; left: 50%; bottom: 12px; transform: translateX(-50%); z-index: 20; width: min(520px, calc(100vw - 20px)); max-height: 52dvh; overflow: auto; background: #0d1626f2; border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }
+#panel h2, #help h2, #settings h2 { margin: 0 32px 8px 0; font-size: 17px; }
+#panel-close, #help-close, #settings-close { position: absolute; top: 8px; right: 8px; padding: 4px 9px; }
+#settings { z-index: 21; }
+.speed-setting { display: grid; gap: 9px; }
+.resident-style-setting { margin: 16px 0 0; padding: 10px 12px; border: 1px solid #ffffff33; border-radius: 10px; display: grid; gap: 8px; }
+.resident-style-setting legend { font-weight: 700; padding: 0 4px; }
+#resident-style-options { display: grid; gap: 6px; }
+#resident-style-options button { text-align: left; min-height: 44px; padding: 8px 10px; }
+#resident-style-options button[aria-checked="true"] { outline: 2px solid #7fe0ff; font-weight: 700; }
+#resident-style-options small { display: block; font-weight: 400; opacity: .8; margin-top: 2px; }
+.speed-setting-heading, .speed-setting-scale { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.speed-setting-heading { font-weight: 700; }
+#movement-speed-value { color: var(--accent); font-variant-numeric: tabular-nums; }
+#movement-speed { width: 100%; min-height: 40px; padding: 0; cursor: pointer; accent-color: var(--accent); touch-action: pan-x; }
+.speed-setting-scale { font-size: 12px; opacity: .85; }
+#movement-speed-preview { margin: 0; font-size: 13px; }
+#movement-speed-description { margin: 0; font-size: 12px; color: #d1deee; }
+#movement-speed-reset { justify-self: start; }
+#panel-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+#panel .big { font-size: 20px; }
+#panel .dim { opacity: .7; font-size: 12px; }
+#minimap { position: fixed; top: max(10px, env(safe-area-inset-top)); right: 10px; z-index: 8; width: 260px; height: 110px; background: #15253bd0; border-radius: 10px; }
+
+/* Geographic compass: intentionally outside the minimap, upper-right, non-interactive.
+   N/E/S/W dial rotates opposite camera heading; the top triangle is forward. */
+#game-compass {
+  position: fixed;
+  top: max(10px, env(safe-area-inset-top));
+  /* Desktop: sit to the LEFT of the 260px minimap (10px right margin + 10px gap). */
+  right: calc(280px + env(safe-area-inset-right));
+  z-index: 9;
+  width: 84px;
+  min-height: 92px;
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  box-sizing: border-box;
+  padding: 5px 5px 6px;
+  background: #101c30ed;
+  color: #f3f8ff;
+  border: 1px solid #93a6bb;
+  border-radius: 13px;
+  pointer-events: none;
+  font: 600 11px/1.1 system-ui,sans-serif;
+  box-shadow: 0 2px 10px #0007;
+}
+#game-compass[hidden],body.playing #game-compass,body.overview #game-compass {display:none!important;}
+.compass-face {position:relative;width:65px;height:65px;border:1px solid #91a7bb;border-radius:50%;background:radial-gradient(circle,#283c4b 0,#17253b 65%,#0d1c2e 100%);}
+.compass-rose {position:absolute;inset:0;transform-origin:center;will-change:transform;}
+.compass-rose span {position:absolute;font-size:12px;line-height:1;text-shadow:0 1px 2px #000;transform:translate(-50%,-50%);}
+.compass-n {left:50%;top:13%;color:#ff817b;font-weight:900;}
+.compass-e {left:87%;top:50%;}
+.compass-s {left:50%;top:87%;}
+.compass-w {left:13%;top:50%;}
+.compass-centre {position:absolute;top:50%;left:50%;width:4px;height:4px;border-radius:50%;background:#e6edf3;transform:translate(-50%,-50%);}
+.compass-forward {position:absolute;left:50%;top:-5px;transform:translateX(-50%);width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:8px solid #ffd77b;z-index:2;}
+.compass-reading {font-size:10px;font-variant-numeric:tabular-nums;white-space:nowrap;letter-spacing:.035em;}
+#compass-setting {margin:12px 0;padding:10px 12px;border:1px solid #ffffff33;border-radius:10px;}
+#compass-setting legend{font-weight:700;padding:0 4px;}
+.compass-setting-label{display:flex;align-items:center;gap:9px;font-weight:600;}
+.compass-setting-label input{width:19px;height:19px;accent-color:#7de1db;}
+#compass-setting p{margin:8px 0 0;font-size:12px;opacity:.86;}
+@media(max-width:700px){
+  /* The compact top HUD fills much of a phone's width. Compass sits below
+     it instead of masking the clock/000/+ buttons or obscuring tap targets. */
+  #game-compass{top:max(98px,calc(env(safe-area-inset-top) + 88px));right:max(10px,env(safe-area-inset-right));width:78px;min-height:84px;padding:4px 4px 5px;}
+  .compass-face{width:59px;height:59px;}
+  body.compass-on #first-day{top:max(202px,calc(env(safe-area-inset-top) + 192px));}
+}
+
+#floor-indicator { position:fixed; top:max(68px, calc(env(safe-area-inset-top) + 55px)); left:10px; z-index:9; background:#10223eea; padding:7px 12px; border-radius:9px; border:1px solid #8197b7; font-weight:600; max-width:calc(100vw - 20px); }
+@media (max-width:700px) { #floor-indicator { top:max(65px, calc(env(safe-area-inset-top) + 55px)); font-size:12px; max-width:210px; } }
+#touch { position: fixed; inset: 0; z-index: 7; pointer-events: none; }
+#stick { position: absolute; width: 110px; height: 110px; left: 30px; bottom: 40px; border-radius: 50%; background: #ffffff22; border: 2px solid #ffffff55; opacity: .55; }
+#stick.on { opacity: 1; }
+#knob { position: absolute; left: 30px; top: 30px; width: 50px; height: 50px; border-radius: 50%; background: #ffffffaa; }
+#actions { position: absolute; right: max(14px, env(safe-area-inset-right)); bottom: max(18px, env(safe-area-inset-bottom)); display: grid; grid-template-columns: repeat(2, 58px); gap: 10px; pointer-events: auto; }
+#actions button { height: 58px; font-size: 24px; border-radius: 50%; background: #15243ccc; touch-action: none; }
+@media (max-width: 700px) {
+  #hud { padding: 8px; font-size: 12px; max-width: 230px; }
+  #hud h1 { font-size: 14px; }
+  #hud.hud-minimised { padding:4px 5px 4px 9px; }
+  #minimap { width: 140px; height: 60px; }
+  #card { bottom: auto; top: 150px; font-size: 12px; max-width: 260px; }
+  #panel, #help, #settings { bottom: 160px; max-height: 40dvh; }
+}
+#panel.wide { width: min(760px, calc(100vw - 20px)); max-height: 70dvh; }
+#panel h3, #panel h4, #panel h5, #panel h6 { margin: 12px 0 4px; font-size: 15px; }
+#panel h3 { font-size: 17px; }
+#panel pre { background: #0007; padding: 8px; border-radius: 8px; overflow-x: auto; font-size: 12px; white-space: pre; }
+#panel code { background: #0005; padding: 0 4px; border-radius: 4px; font-size: 12px; }
+#panel blockquote { border-left: 3px solid var(--line); margin: 6px 0; padding-left: 10px; opacity: .85; }
+#panel ul, #panel ol { padding-left: 20px; margin: 4px 0; }
+#panel ul.files { list-style: none; padding-left: 8px; font-family: ui-monospace, monospace; font-size: 12px; overflow-wrap: anywhere; }
+#panel details summary { cursor: pointer; padding: 3px 0; }
+#panel .row { font-size: 13px; margin: 2px 0; }
+#panel .crit { color: #ffd166; font-weight: bold; }
+#game { position: fixed; inset: 0; z-index: 50; background: #000; display: flex; flex-direction: column; }
+#game-bar { display: flex; align-items: center; gap: 10px; padding: max(6px, env(safe-area-inset-top)) 10px 6px; background: #101a2c; border-bottom: 1px solid var(--line); }
+#game-title { flex: 1; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#game-frame { flex: 1; width: 100%; border: 0; background: #000; }
+body.playing #hud, body.playing #touch, body.playing #minimap, body.playing #prompt, body.playing #card { display: none !important; }
+#panel-actions button.play { font-size: 18px; padding: 10px 22px; background: #2b6e3c; border-color: #6fdc8c; }
+
+
+#loading a, #hud a { color: var(--accent); }
+#hud .btn-link { border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; text-decoration: none; }
+#prompt { white-space: normal; text-align: center; max-width: calc(100vw - 24px); width: max-content; }
+@media (max-width: 700px) {
+  #hud { max-width: calc(100vw - 20px); width: 230px; }
+  /* The expanded controls can be longer than a small phone screen.
+     Keep gameplay visible and the + / − control reachable while scrolling. */
+  #hud:not(.hud-minimised) { max-height: min(74dvh, calc(100dvh - 20px)); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
+  #hud:not(.hud-minimised) .hud-heading { position: sticky; top: 0; z-index: 1; background: #101a2c; padding-bottom: 5px; }
+  #hud:not(.hud-minimised) .hud-heading { flex-wrap: wrap; }
+  #hud:not(.hud-minimised) .hud-heading h1 { flex: 1 0 100%; min-width: 0; }
+  #hud button, #hud .btn-link { min-height: 40px; }
+  #minimap { top: auto; bottom: 165px; width: 110px; height: 47px; pointer-events: none; }
+  #card { top: auto; bottom: 165px; max-width: calc(100vw - 145px); max-height: 28dvh; overflow: auto; }
+  #panel, #help, #settings { bottom: max(10px, env(safe-area-inset-bottom)); max-height: 65dvh; }
+}
+#panel .chat { display: flex; flex-direction: column; min-height: 0; }
+#panel .chat-log { flex: 1 1 auto; min-height: 0; max-height: 38dvh; overflow-y: auto; overscroll-behavior: contain; padding: 4px 2px; }
+#panel .chat-log p { margin: 6px 0; line-height: 1.4; }
+#panel .chat-log .you { color: #ffe08a; }
+#panel .chat-form { flex: 0 0 auto; position: sticky; bottom: 0; z-index: 1; display: flex; gap: 8px; margin-top: 8px; padding-top: 6px; background: var(--panel); }
+#panel .chat-input, #panel .chat-key { flex: 1; min-width: 0; font: inherit; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line); background: #050a14; color: var(--ink); }
+#panel .chat-key { width: 12em; padding: 4px 8px; }
+#panel .chat-brain { margin-top: 8px; }
+
+/* Immersive bedroom transition: full viewport, above every HUD/phone control. */
+#sleep-screen{position:fixed;inset:0;z-index:200;display:grid;place-items:center;
+  background:rgba(3,5,10,0);color:#f1f2f6;pointer-events:all;
+  opacity:1;transition:background .85s ease;}
+#sleep-screen.sleep-dark{background:rgba(3,5,10,1);}
+.sleep-content{text-align:center;opacity:0;transition:opacity .65s ease;padding:24px;max-width:90vw;}
+#sleep-screen.sleep-dark .sleep-content{opacity:1;}
+.sleep-icon{font-size:40px;line-height:1.6;filter:drop-shadow(0 0 20px #8da2cf88);}
+#sleep-message{font-size:clamp(19px,5vw,28px);margin:4px 0;font-weight:650;}
+#sleep-time{font-variant-numeric:tabular-nums;color:#b8c7dd;font-size:16px;letter-spacing:.04em;}
+@media(prefers-reduced-motion:reduce){#sleep-screen,.sleep-content{transition-duration:.12s;}}
+/* Town life */
+#clock { font-size: 12px; font-weight: normal; opacity: .85; margin-left: 6px; white-space: nowrap; }
+.bar { display: inline-block; width: 120px; height: 10px; background: #0003; border-radius: 5px; vertical-align: middle; overflow: hidden; }
+.bar span { display: block; height: 100%; background: linear-gradient(90deg, #6aa83a, #e0c060); }
+.ok { color: #7fe08f; }
+table.ledger { border-collapse: collapse; width: 100%; font-size: 13px; }
+table.ledger th, table.ledger td { text-align: left; padding: 3px 6px; border-bottom: 1px solid #ffffff1a; vertical-align: top; }
+ul.news { margin: 4px 0; padding-left: 18px; font-size: 13px; }
+#panel h3 { margin: 10px 0 4px; font-size: 14px; }
+#panel .chat-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+#panel .chat-chip { font-size: 12px; padding: 4px 9px; border-radius: 14px; background: #162940; border: 1px solid #4e6b8c; }
+#panel .chat-chip:hover { border-color: var(--accent); background: #213e5e; }
+@media (max-width: 700px) {
+  #panel.chat-typing .chat-chips, #panel.chat-typing .chat-brain, #panel.chat-typing #panel-actions { display: none; }
+  #panel.chat-typing {
+    top: calc(var(--npc-top, 0px) + max(6px, env(safe-area-inset-top)));
+    bottom: auto;
+    left: max(6px, env(safe-area-inset-left));
+    right: max(6px, env(safe-area-inset-right));
+    transform: none;
+    width: auto;
+    height: calc(var(--npc-vh, 100dvh) - max(6px, env(safe-area-inset-top)) - max(6px, env(safe-area-inset-bottom)));
+    max-height: calc(var(--npc-vh, 100dvh) - max(6px, env(safe-area-inset-top)) - max(6px, env(safe-area-inset-bottom)));
+    display: flex;
+    flex-direction: column;
+  }
+  #panel.chat-typing #panel-body { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
+  #panel.chat-typing .chat { flex: 1 1 auto; min-height: 0; }
+  #panel.chat-typing .chat-log { max-height: none; }
+}
+/* The house card sits over the joystick half of a phone screen; let thumbs through to the canvas. */
+@media (pointer: coarse) {
+  #card { pointer-events: none; }
+  #card a { pointer-events: auto; }
+}
+
+/* Persistent survival status; still readable with the compact mobile HUD. */
+#needs-strip{display:flex;align-items:center;gap:8px;font-size:12px;padding:4px 0 0;justify-content:space-between}
+#needs-strip button{font-size:12px;min-height:28px;padding:3px 8px;border-radius:7px}
+#hud.hud-minimised #needs-strip{display:none}
+@media(max-width:600px){#needs-strip{font-size:11px}#needs-strip button{font-size:11px;padding:3px 6px}}
+
+/* Visit-ready opening hours directory: legible on mobile and desktop. */
+.hours-list{display:grid;gap:6px;margin:8px 0 16px;}
+.hours-entry{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:rgba(255,255,255,.04);}
+.hours-entry-info{display:flex;flex:1 1 160px;min-width:0;flex-direction:column;gap:3px;}
+.hours-entry-info strong{overflow-wrap:anywhere;}
+.hours-entry-info .dim{font-size:.88em;}
+.hours-status{font-size:.87em;flex:0 1 auto;}
+.hours-entry button{padding:5px 12px;min-width:44px;}
+@media(max-width:600px){.hours-entry{gap:6px;padding:7px}.hours-entry-info{flex-basis:150px}.hours-status{flex-basis:auto}}
+
+/* First day in town: the guide card sits under the minimap (above it on phones). */
+#first-day { position: fixed; top: max(128px, calc(env(safe-area-inset-top) + 118px)); right: 10px; z-index: 8; width: 260px; display: grid; grid-template-columns: 1fr auto auto; align-items: center; column-gap: 6px; text-align: left; padding: 6px 10px; background: #15253bd8; border: 1px solid #8197b7; border-radius: 10px; color: #fff; font: inherit; font-size: 13px; cursor: pointer; }
+#first-day[hidden] { display: none; }
+#first-day .fd-step { grid-column: 1 / -1; font-size: 11px; opacity: .8; }
+#first-day b { grid-column: 1; }
+#first-day .fd-sub { grid-column: 1 / -1; font-size: 11px; opacity: .8; }
+#first-day .fd-arrow { display: inline-block; font-size: 18px; color: #ffd166; transition: transform .3s; }
+#first-day .fd-dist { font-size: 12px; color: #ffd166; white-space: nowrap; }
+#first-day.fd-hidden { width: auto; padding: 4px 8px; }
+#panel .first-day-steps li.done { opacity: .65; }
+#panel .first-day-steps li.current { font-weight: bold; color: #ffd166; }
+body.playing #first-day, body.overview #first-day { display: none !important; }
+@media (max-width: 700px) {
+  #first-day { top: max(80px, calc(env(safe-area-inset-top) + 70px)); width: 160px; grid-template-columns: auto 1fr; font-size: 11px; padding: 5px 8px; }
+  #first-day b { grid-column: 1 / -1; }
+  #first-day .fd-arrow { font-size: 15px; }
+}
+
+/* Performance readout (Settings → Performance, or ?perf). */
+#perf-meter { position: fixed; left: 10px; bottom: max(10px, env(safe-area-inset-bottom)); z-index: 9; max-width: 340px; text-align: left; padding: 6px 9px; background: #000c; color: #e8f1ff; border: 1px solid #ffffff44; border-radius: 8px; font: 12px/1.35 ui-monospace, monospace; cursor: pointer; }
+#perf-meter[hidden] { display: none; }
+#perf-meter .dim { opacity: .7; }
+#perf-meter .perf-smooth { color: #6fdc8c; } #perf-meter .perf-playable { color: #ffd166; } #perf-meter .perf-stutters { color: #ff7a7a; }
+@media (max-width: 700px) { #perf-meter { top: max(80px, calc(env(safe-area-inset-top) + 70px)); bottom: auto; max-width: calc(100vw - 190px); font-size: 10px; padding: 4px 6px; } }

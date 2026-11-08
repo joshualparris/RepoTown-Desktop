@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%231d3446'/%3E%3Cpath d='M8 31 32 11 56 31v24H8Z' fill='%236ab394'/%3E%3Cpath d='M26 55V37h12v18' fill='%231d3446'/%3E%3C/svg%3E">
+<title>Repository Town 3D</title>
+<meta name="description" content="Walk a town of 188 houses, each designed from a real GitHub repository.">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="multiplayer/style.css">
+<link rel="stylesheet" href="ui/loading-screen.css">
+<script defer src="ui/loading-screen.js"></script>
+<link rel="stylesheet" href="ui/driving-dashboard.css">
+<link rel="stylesheet" href="ui/minimap-visibility.css">
+<link rel="stylesheet" href="npc.css">
+<link rel="stylesheet" href="adventure/adventure.css">
+<script src="ui/new-game.js"></script>
+<script defer src="ui/hud-collapse.js"></script>
+<script defer src="ui/minimap-visibility.js"></script>
+<script type="importmap">{"imports":{"three":"./vendor/three.module.min.js","three/addons/utils/BufferGeometryUtils.js":"./vendor/BufferGeometryUtils.js"}}</script>
+
+</head>
+<body>
+<div id="loading" aria-labelledby="loading-title">
+  <section class="loading-card">
+    <p class="loading-eyebrow">Preparing your world</p>
+    <h1 id="loading-title">Repository Town</h1>
+    <p id="loading-text" role="status" aria-live="polite">Downloading JavaScript and the 3D engine.</p>
+    <progress id="loading-progress" value="0" max="12" aria-label="Startup stages completed"></progress>
+    <div class="loading-meta"><span id="loading-count">0 of 12 stages complete</span><span id="loading-elapsed">0s elapsed</span></div>
+    <ol id="loading-steps" aria-label="Behind the scenes"></ol>
+    <div class="loading-downloads"><span id="loading-network">Waiting for game files…</span><span id="loading-file"></span></div>
+    <p class="loading-explanation">The bar counts completed startup stages, not download bytes. Some stages take longer than others. Optional models can keep loading while you play.</p>
+    <p id="loading-slow" hidden>Still working on this step. Building the 3D scene can take longer on slower devices.</p>
+    <p id="loading-error" role="alert" hidden></p>
+    <div class="loading-footer"><button id="loading-retry" type="button" hidden>Retry loading</button></div>
+    <noscript><p>JavaScript is required for the 3D town. You can still open the arcade library.</p></noscript>
+  </section>
+</div>
+<aside id="loading-background" hidden aria-label="Optional background downloads">
+  <button id="loading-background-close" type="button" aria-label="Dismiss background download status">×</button>
+  <p id="loading-background-text" role="status" aria-live="polite"></p><span id="loading-background-file"></span>
+</aside>
+<header id="hud">
+  <div class="hud-heading">
+    <h1>🏘 <span class="hud-title-full">Repository Town</span><span class="hud-title-short">Town</span> <span id="clock" aria-live="off"></span></h1>
+    <button id="btn-000" type="button" aria-label="In-game Triple Zero simulation, not real emergency calling" title="In-game emergency dispatch only; NOT a real 000 call">🚨 000 (Game)</button>
+    <button id="btn-hud-toggle" type="button" aria-controls="hud-details" aria-expanded="true" aria-label="Minimise town controls" title="Minimise controls">−</button>
+  </div>
+  <div id="needs-strip"><span id="needs-status">🍽 32% · 💤 22%</span> <button id="btn-needs" type="button">Food &amp; rest</button> <button id="btn-wallet" type="button" title="Wallet, receipts and paid jobs">💳 Wallet</button></div>
+  <div id="hud-details">
+  <form id="search-form" role="search">
+    <input id="search" list="house-list" placeholder="Building or address, e.g. Z9-N" aria-label="Find a building" autocomplete="off">
+    <datalist id="house-list"></datalist>
+    <button type="submit">Go</button>
+  </form>
+  <div class="row">
+    <button id="btn-map" aria-pressed="false">Bird's-eye</button>
+    <button id="btn-capture" type="button" aria-pressed="false" title="Look around without holding a mouse button (L)">🎯 Capture mouse</button>
+    <button id="btn-bag" type="button" title="Your bag: equipment, food and goods (I)">🎒 Bag</button>
+    <button id="btn-skills" type="button" title="Your skills: levels and XP">📊 Skills</button>
+    <button id="btn-townmap" type="button" title="Interactive town map: pinch or scroll to zoom, tap for addresses (N)">🗺️ Map</button>
+    <button id="btn-guide" type="button" title="Town guide & starting tour">🗺 Guide</button>
+    <button id="btn-hours" type="button" title="Opening hours, live entry status and directions for every town business">🕒 Shop hours</button>
+    <button id="btn-discoveries" type="button" title="Explorer's Log: house discovery progress" aria-label="Explorer's Log, 0 of 188 houses discovered">🧭 <span id="discovery-count">0/188</span></button>
+    <button id="btn-help">Help</button>
+    <button id="btn-settings" type="button" aria-controls="settings" title="Preferences and saved progress">Settings</button>
+    <button id="btn-journal" type="button" title="Adventure quests and treasures (J)">📖 Quests <span id="expedition-count"></span></button>
+    <button id="btn-npcs" type="button" title="Meet the town's characters">💬 NPCs</button>
+    <button id="btn-electrical-grid" type="button" title="Inspect the physical town grid, solar, meters and local outages" aria-label="Open town electrical grid inspector">⚡ Grid</button>
+    <a class="btn-link" href="address-map.html">Plot map</a>
+    <a class="btn-link" href="narromine-progress.html" title="Inspect surveyed buildings and modelling evidence in real Narromine">Narromine survey</a>
+    <a class="btn-link" id="btn-streetview" href="narromine-compare.html" target="_blank" rel="noopener" title="Compare this exact spot with real Narromine in Google Street View (opens a new tab; Street View use is counted and shown)">Street View</a>
+    <a class="btn-link" href="people.html">NPC Lounge</a>
+    
+    <button id="btn-time" type="button" title="Jump the town clock to the next part of the day (T)">☀️ Day</button>
+    <button id="btn-sound" type="button" aria-pressed="false" title="Birdsong, crickets, wind, traffic, the town bell and footsteps">🔇 Sound</button>
+    <button id="btn-perf" type="button" aria-pressed="false" title="Cull distant objects for smoother frame rate on phones">⚡ Smooth</button>
+    <button id="btn-exit" hidden>Exit house</button>
+    <button id="btn-unstuck">Unstuck</button>
+    <button id="btn-reset">Reset</button>
+  </div>
+  <p id="status" aria-live="polite"></p>
+  </div>
+</header>
+<!-- Camera heading HUD: fixed 12 o'clock is where you are looking. The dial rotates to geographic north. -->
+<aside id="game-compass" role="img" aria-label="Compass: facing north, zero degrees" aria-live="off">
+  <div class="compass-face">
+    <span class="compass-forward" aria-hidden="true"></span>
+    <div class="compass-rose" aria-hidden="true">
+      <span class="compass-n">N</span><span class="compass-e">E</span>
+      <span class="compass-s">S</span><span class="compass-w">W</span>
+    </div>
+    <span class="compass-centre" aria-hidden="true"></span>
+  </div>
+  <output class="compass-reading" aria-hidden="true">N · 000°</output>
+</aside>
+<aside id="card" hidden aria-live="polite"></aside>
+<div id="prompt" hidden></div>
+<div id="sleep-screen" role="status" aria-live="polite" aria-atomic="false" hidden>
+  <div class="sleep-content">
+    <div class="sleep-icon" aria-hidden="true">🌙</div>
+    <h2 id="sleep-message">Settling into bed…</h2>
+    <p id="sleep-time" aria-hidden="true"></p>
+  </div>
+</div>
+<section id="panel" role="dialog" aria-modal="false" aria-labelledby="panel-title" hidden>
+  <button id="panel-close" aria-label="Close">✕</button>
+  <h2 id="panel-title"></h2>
+  <div id="panel-body"></div>
+  <div id="panel-actions"></div>
+</section>
+<section id="settings" role="dialog" aria-labelledby="settings-title" aria-modal="false" hidden>
+  <button id="settings-close" type="button" aria-label="Close settings">✕</button>
+  <h2 id="settings-title">Settings</h2>
+  <fieldset><legend>Town activity</legend>
+    <label for="town-activity">People and traffic</label>
+    <select id="town-activity" aria-describedby="town-activity-description">
+      <option value="calm">Calm (recommended)</option>
+      <option value="standard">Standard (busier)</option>
+    </select>
+    <p id="town-activity-description">Calm gives you more space: fewer background people, cars and parked vehicles. Shops, staff, quests and saved progress stay intact. Existing cars finish their journeys; parked traffic updates within a few seconds. Saved on this device.</p>
+  </fieldset>
+  <fieldset><legend>Saved progress</legend>
+    <p>Your game saves automatically on this device. No account is needed.</p>
+    <a id="settings-save-transfer" class="btn-link" href="release.html" target="_blank" rel="noopener">Back up or restore your save</a>
+    <button id="settings-new-game" type="button">Start a new game</button>
+    <p id="settings-new-game-note" hidden>This clears your town, money, items, skills and quests on this device. Your settings stay. <button id="settings-new-game-confirm" type="button">Yes, start over</button> <button id="settings-new-game-cancel" type="button">Keep my game</button></p>
+  </fieldset>
+  <div class="speed-setting">
+    <div class="speed-setting-heading"><label for="movement-speed">Movement speed</label><output id="movement-speed-value" for="movement-speed">1.0×</output></div>
+    <input id="movement-speed" type="range" min="0.1" max="5" step="0.1" value="1" aria-describedby="movement-speed-description movement-speed-preview">
+    <div class="speed-setting-scale"><span>Very slow · 0.1×</span><span>Very fast · 5×</span></div>
+    <p id="movement-speed-preview">Walk 4.2 m/s · Run 7.6 m/s</p>
+    <p id="movement-speed-description">Applies immediately to walking and the Run button, indoors and outside. Hunger and tiredness can still reduce your speed. Saved on this device.</p>
+    <button id="movement-speed-reset" type="button">Reset to normal (1×)</button>
+  </div>
+  <fieldset id="compass-setting"><legend>Navigation</legend>
+    <label for="settings-compass" class="compass-setting-label"><input id="settings-compass" type="checkbox" checked> Show compass in the top-right corner</label>
+    <p>A small N/E/S/W direction dial and heading, updated as you look around or drive. North is map north; the top marker shows the direction you're facing. Saved on this device.</p>
+  </fieldset>
+  <fieldset id="sun-setting"><legend>Sun and shadows</legend>
+    <label for="settings-shadows">Building and tree shadow quality</label>
+    <select id="settings-shadows" aria-describedby="shadow-description">
+      <option value="auto">Automatic (recommended)</option>
+      <option value="off">Off (best battery)</option>
+      <option value="low">Low (phones)</option>
+      <option value="medium">Medium</option>
+      <option value="high">High (fast computers)</option>
+    </select>
+    <p id="shadow-description">Realistic seasonal Narromine sun position, including daylight saving. Shadows move with the sun and are soft on overcast days. Automatic mode reduces quality on slower devices; your choice saves locally.</p>
+  </fieldset>
+  <fieldset id="perf-setting"><legend>Performance</legend>
+    <p>Shows frame rate, the slowest frames, draw calls and your phone's graphics chip on screen. Tap the readout for a 30-second check, then screenshot it. Saved on this device.</p>
+    <button id="settings-perf" type="button" aria-pressed="false">Show performance readout</button>
+  </fieldset>
+  <fieldset id="resident-style-setting" class="resident-style-setting">
+    <legend>Resident style</legend>
+    <div id="resident-style-options" role="radiogroup" aria-describedby="resident-style-status"></div>
+    <p id="resident-style-status">Changes how people in the town look. Saved on this device.</p>
+  </fieldset>
+</section>
+<section id="help" role="dialog" aria-labelledby="help-title" hidden>
+  <button id="help-close" aria-label="Close">✕</button>
+  <h2 id="help-title">How to play</h2>
+  <p><b>Desktop:</b> WASD or arrows move · drag to look, or select Capture mouse (L) to look around freely without holding a button. Esc releases the mouse; double-click also captures it · Shift runs · C crouches · Space jumps · E uses an exhibit · M toggles the bird's-eye map · T jumps the clock · Esc closes panels.</p>
+  <p><b>Adventure:</b> Press J or open the Quest Journal. Find twelve glowing relics outside public houses, solve the puzzles and return to the Guild Chest near the start.</p>
+  <p><b>In-game emergencies:</b> Tap 🚨 000 (Game) to simulate a Police, Fire or Ambulance emergency. This never contacts real emergency services. For a real emergency, use your phone to call 000.</p>
+  <p><b>Finding open shops:</b> choose 🕒 Shop hours to see daily hours, live entry status and directions for all shops and services.</p>
+   <p><b>Items:</b> Find the torch beside the Town Guide. Press E or tap ✋ to pick it up. Open your Bag to hold, put away or drop it on clear ground. Dropped equipment stays there for you to collect, including after a reload.</p>
+   <p><b>Town life:</b> the town runs on its own clock (a day lasts 72 minutes; the Town Guide kiosk near the start can speed it up). Farms on street 8 grow food, trucks deliver it to the mill, bakery and shops, and the villagers work, shop, cook, eat and sleep. Stop anyone for a chat — ask what they ate, for gossip, or for a relic hint. Shop counters, farms and the Town Hall ledger open with E.</p>
+  <p><b>Flying at Narromine Aerodrome (YNRM):</b> Find Narromine Aerodrome using the search, walk to either parked aircraft and press E or ✋. W/S changes throttle, A/D steer or bank, Arrow ↑/↓ pitch, V switches cockpit/chase views and R lines up on runway 11 while stopped. On phones, use the flight instrument panel’s hold-buttons. E or 🚶 Exit works only once landed and stopped. Runway positions and flying characteristics are simplified game interpretations, not real navigation guidance.</p>
+  <p><b>Driving:</b> The instrument dashboard shows live km/h, fuel, estimated range, engine coolant temperature, gear and odometer. Tap Radio ON to hear original in-game stations; use the arrows to tune and the volume slider to adjust. The dashboard closes when you get out. The coolant and RPM readings are simplified game simulations, not real vehicle diagnostics.</p>
+  <p><b>Movement speed:</b> Open Settings to adjust walking and running from 0.1× to 5×, then use Reset to normal when needed. Your preference saves on this device.</p>
+  <p><b>Sun and shadows:</b> The outdoor sun follows Narromine's actual seasonal sky path based on the in-game date and NSW time. Change the moving building/tree shadows in Settings → Sun and shadows. High quality uses more battery; automatic is safest on phones.</p>
+  <p><b>Compass:</b> Toggle the small top-right N/E/S/W heading compass in Settings → Navigation. The fixed top pointer is where your camera is facing; the dial points to map north. Your preference saves on this device.</p>
+  <p><b>Phone:</b> left thumb drags the joystick · right thumb drags to look · ⤒ jumps · ✋ uses · 🏃 and 🧎 toggle run and crouch.</p>
+  <p>Walk up to a front door and it opens; keep walking to go inside. Walk back out through the door you came in by. Your position saves automatically.</p>
+  <p><b>NPC conversations on phones:</b> Expand the town controls with +, then choose <b>Dialogue settings</b> to turn nearby conversation pop-ups on or off. Choose ⚡ Grid or Ask AI from that same + menu; neither stays over the game view. Tap ✕ on a pop-up to dismiss that yarn. Yarns, NPCs and Ask AI remain available whenever you choose them.</p><p><b>NPCs:</b> Approach a character and press E or ✋, or tap 💬 NPCs. Characters and villagers chat about anything through the town's AI service (no key needed); your messages are sent to it, and they answer offline when it is unavailable.</p>
+</section>
+<canvas id="minimap" width="260" height="110" aria-label="Town map"></canvas>
+<div id="touch" hidden>
+  <div id="stick"><div id="knob"></div></div>
+  <div id="actions">
+    <button id="t-use" aria-label="Use">✋</button>
+    <button id="t-jump" aria-label="Jump">⤒</button>
+    <button id="t-run" aria-label="Run" aria-pressed="false">🏃</button>
+    <button id="t-crouch" aria-label="Crouch" aria-pressed="false">🧎</button>
+    <button id="t-view" aria-label="Change camera view" hidden>🎥</button>
+  </div>
+</div>
+<section id="game" role="dialog" aria-labelledby="game-title" hidden>
+  <div id="game-bar"><span id="game-title"></span><button id="game-exit">✕ Back to town</button></div>
+  <iframe id="game-frame" title="Game" allow="autoplay; fullscreen; gamepad; clipboard-write"></iframe>
+</section>
+
+<aside id="npc-roster" hidden aria-label="Talk to a town resident">
+  <div class="npc-roster-top"><strong>Meet the residents</strong><button type="button" id="npc-roster-close" aria-label="Close character list">✕</button></div>
+  <p>Each character has a different personality. Pick anyone.</p>
+  <div id="npc-roster-items"></div>
+</aside>
+<section id="npc-chat" hidden role="dialog" aria-label="Chat with a Repository Town resident" aria-modal="false">
+  <header class="npc-chat-top">
+    <span id="npc-avatar" aria-hidden="true">💬</span>
+    <div><h2 id="npc-name">Town resident</h2><p id="npc-role"></p></div>
+    <button id="npc-close" type="button" aria-label="End conversation">✕</button>
+  </header>
+  <div id="npc-messages" role="log" aria-live="polite" aria-relevant="additions text"></div>
+  <p id="npc-status" role="status">Chat freely · no access code required.</p>
+  
+  <form id="npc-form"><label class="visually-hidden" for="npc-input">Your message</label><input id="npc-input" maxlength="750" autocomplete="off" placeholder="Ask me anything…" required><button id="npc-send" type="submit">Send ↗</button></form>
+  <small>Fictional AI characters. Chat is sent to Groq when connected; please don't share sensitive information. Chats stay in this tab.</small>
+</section>
+
+<section id="journal" role="dialog" aria-labelledby="journal-title" aria-modal="false" hidden>
+  <header class="journal-top"><div><span class="journal-kicker">EXPEDITION MODE</span><h2 id="journal-title">🧭 Adventure Guild Journal</h2></div><button id="journal-close" type="button" aria-label="Close adventure journal">✕</button></header>
+  <div id="journal-content"></div>
+</section>
+<div id="expedition-compass" hidden aria-live="off"><span id="expedition-arrow">▲</span><span id="expedition-target">Explore the town</span></div>
+<div id="expedition-hint" hidden aria-live="off"></div>
+<div id="expedition-toast" hidden role="status" aria-live="polite"></div>
+<script type="module" src="main.js"></script>
+<script type="module" src="ui/release.js"></script>
+</body>
+</html>

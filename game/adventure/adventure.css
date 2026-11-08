@@ -1,0 +1,47 @@
+/* Adventure Guild: readable on desktop and narrow portrait phones. */
+#btn-journal { background:#3b3458; border-color:#baa0ee; font-weight:600; }
+#btn-journal #expedition-count{color:#f9dea4;white-space:nowrap;font-size:11px}
+#journal{position:fixed;z-index:35;top:max(12px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));bottom:max(12px,env(safe-area-inset-bottom));width:min(580px,calc(100vw - 24px));display:flex;flex-direction:column;color:#eff5ff;background:#121d34f9;border:1px solid #7d8fae;border-radius:17px;box-shadow:0 12px 60px #0009;overflow:hidden}
+#journal[hidden]{display:none!important}
+.journal-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px;background:#253353;border-bottom:1px solid #536585;flex-shrink:0}
+.journal-kicker,.journal-eyebrow{display:block;color:#eecf8a;font-size:10px;font-weight:800;letter-spacing:.16em}
+#journal-title{font-size:20px;margin:4px 0 0}
+#journal-close{font-size:18px;min-width:44px;min-height:44px;flex-shrink:0}
+#journal-content{padding:15px 18px 30px;overflow:auto;overscroll-behavior:contain;flex:1}
+#journal-content h3{font-size:16px;margin:17px 0 9px}
+#journal-content h3:first-of-type{margin-top:6px}
+.journal-muted{color:#c2cfe2;font-size:12px;line-height:1.5}
+.expedition-progress{height:11px;border-radius:11px;background:#344158;overflow:hidden;margin:10px 0}
+.expedition-progress-fill{height:100%;border-radius:11px;background:linear-gradient(90deg,#79cdae,#f8cd77);transition:width .3s}
+.expedition-milestones{display:flex;flex-wrap:wrap;gap:7px}
+.expedition-milestone{font-size:11px;padding:6px 9px;border-radius:20px;border:1px solid #60708c;background:#243b53}
+.relic-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.relic-card{background:#1b2b43;border:1px solid #435977;padding:11px;border-radius:12px;min-width:0;position:relative}
+.relic-card.owned{background:#203e3b;border-color:#6b9e83}
+.relic-card strong{font-size:13px;display:block;line-height:1.35;margin-bottom:5px}
+.relic-card small{display:block;color:#beccdc;font-size:11px;line-height:1.5;min-height:35px}
+.relic-actions{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.relic-actions button{background:#354d70;border:1px solid #6d8bad;font-size:11px;padding:7px 9px;min-height:34px}
+.relic-actions button:first-child{background:#315a5d}
+.relic-owned{position:absolute;top:6px;right:7px}
+.adventure-inventory{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:7px}
+.relic-slot{display:grid;place-items:center;border-radius:9px;border:1px solid #64708b;background:#34465d;font-size:24px;min-height:50px}
+.adventure-crown{background:#4c4029;color:#fff3bf;border:1px solid #f2c36e;border-radius:10px;padding:12px;font-weight:bold}
+.journal-close-bottom{display:block;margin-top:22px;min-height:44px;width:100%;background:#344866}
+#expedition-compass{position:fixed;top:max(132px,env(safe-area-inset-top) + 124px);right:12px;z-index:9;display:flex;align-items:center;gap:6px;background:#102944df;color:#fff;border:1px solid #94b5db;border-radius:22px;padding:7px 11px;font-size:11px;max-width:220px;pointer-events:none}
+#expedition-compass #expedition-arrow{display:inline-grid;place-items:center;font-size:23px;color:#efc76d;min-width:25px;transition:transform .15s}
+#expedition-target{min-width:0;overflow:hidden;text-overflow:ellipsis}
+#expedition-hint{position:fixed;bottom:27%;left:50%;transform:translateX(-50%);z-index:9;pointer-events:none;border:1px solid #dac475;background:#302c49ed;border-radius:20px;padding:8px 14px;max-width:calc(100vw - 22px);text-align:center;font-size:13px;font-weight:600}
+#expedition-toast{position:fixed;top:30%;left:50%;transform:translateX(-50%);z-index:40;background:#183d40f4;color:#f7ffeb;border:1px solid #a4dfad;padding:13px 19px;border-radius:15px;box-shadow:0 8px 38px #0009;max-width:calc(100vw - 30px);text-align:center;font-weight:600}
+body.playing #expedition-compass,body.playing #expedition-hint,body.playing #expedition-toast{display:none!important}
+@media(max-width:700px){
+ #journal{inset:max(5px,env(safe-area-inset-top)) 5px max(5px,env(safe-area-inset-bottom)) 5px;width:auto;border-radius:11px}
+ #journal-content{padding:10px 12px 24px}
+ .journal-top{padding:11px 12px}
+ #journal-title{font-size:17px}
+ .relic-grid{grid-template-columns:1fr}
+ .relic-card small{min-height:0}
+ #expedition-compass{top:80px;right:5px;max-width:148px;font-size:10px;padding:5px}
+ #expedition-hint{bottom:32%;font-size:11px}
+ #expedition-toast{top:38%;font-size:13px}
+}

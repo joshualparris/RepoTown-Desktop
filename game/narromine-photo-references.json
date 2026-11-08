@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "baselineDate": "2026-11-04",
+  "policy": "Only use original or licensed/permissioned photographs for modelling; retain source attribution, capture dates, and change notices. Historical photos cannot verify 2026 appearance. No Google Street View imagery is copied.",
+  "records": [
+    {
+      "id": "commons-royal-2017-001",
+      "buildingIds": [
+        "NR-SITE-royal-hotel"
+      ],
+      "description": "Royal Hotel exterior at Narromine, dated 28 November 2017",
+      "creator": "Mattinbgn",
+      "captureDate": "2017-11-28T14:09:53+11:00",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Narromine_Royal_Hotel_001.JPG",
+      "licenceOrPermission": "CC BY 3.0 Unported",
+      "licenceUrl": "https://creativecommons.org/licenses/by/3.0/",
+      "allowedUses": [
+        "architectural visual reference subject to photographer attribution and CC BY 3.0 requirements",
+        "linking to original Commons file description"
+      ],
+      "view": {
+        "lat": -32.235436,
+        "lon": 148.238908,
+        "headingDeg": null,
+        "pitchDeg": null,
+        "cameraHeightM": null
+      },
+      "locallyOwnedFile": null,
+      "reviewed": true,
+      "reviewScope": "Creator, capture date, camera GPS and published CC BY 3.0 licence only. Image composition and present-day facade still unverified",
+      "isCurrentAsOf2026": false
+    },
+    {
+      "id": "commons-dandaloo-2017-002",
+      "buildingIds": [],
+      "description": "Dandaloo Street streetscape context, captured 28 November 2017; attribution required",
+      "creator": "Mattinbgn",
+      "captureDate": "2017-11-28T13:11:45+11:00",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Narromine_Dandaloo_Street_002.JPG",
+      "licenceOrPermission": "CC BY 3.0 Unported",
+      "licenceUrl": "https://creativecommons.org/licenses/by/3.0/",
+      "allowedUses": [
+        "architectural visual reference subject to photographer attribution and CC BY 3.0 requirements",
+        "linking to original Commons file description"
+      ],
+      "view": {
+        "lat": -32.232833,
+        "lon": 148.239319,
+        "headingDeg": null,
+        "pitchDeg": null,
+        "cameraHeightM": null
+      },
+      "locallyOwnedFile": null,
+      "reviewed": true,
+      "reviewScope": "Licence metadata and camera position verified. Streetscape image is contextual; individual buildings are not assigned without manual image review",
+      "isCurrentAsOf2026": false
+    }
+  ],
+  "example": {
+    "id": "ref-001",
+    "buildingIds": [
+      "NR-SITE-royal-hotel"
+    ],
+    "creator": null,
+    "captureDate": null,
+    "sourceUrl": null,
+    "licenceOrPermission": null,
+    "allowedUses": [],
+    "view": {
+      "lat": null,
+      "lon": null,
+      "headingDeg": null,
+      "pitchDeg": null,
+      "cameraHeightM": null
+    },
+    "locallyOwnedFile": null,
+    "reviewed": false
+  }
+}

@@ -1,0 +1,58 @@
+/* Repository Town mini-map is not a Narromine geographic map. Keep its
+   optional control separate from shared compass, driving HUD and world CSS. */
+#minimap[hidden], body.minimap-is-hidden #minimap { display: none !important; }
+body.narromine-minimap-zone #first-day { display: none !important; }
+#minimap-toggle {
+  position: fixed;
+  top: max(15px, calc(env(safe-area-inset-top) + 5px));
+  right: max(14px, env(safe-area-inset-right));
+  z-index: 9;
+  min-height: 34px;
+  min-width: 66px;
+  padding: 5px 9px;
+  border: 1px solid #b2c9db;
+  border-radius: 8px;
+  background: #10243ce8;
+  color: #f6f9ff;
+  font: 600 12px/1.25 system-ui, sans-serif;
+  cursor: pointer;
+  box-shadow: 0 2px 6px #0006;
+}
+#minimap-toggle:focus-visible { outline: 3px solid #ffd266; outline-offset: 2px; }
+#minimap-toggle:hover { background: #28527c; }
+/* When the map disappears, the compass can sit alongside the tiny toggle,
+   rather than leaving an empty 260px desktop gap. */
+body.minimap-is-hidden #game-compass {
+  right: calc(158px + env(safe-area-inset-right));
+}
+body.overview #minimap-toggle, body.playing #minimap-toggle {
+  display: none !important;
+}
+@media (max-width: 700px) {
+  /* Mobile map is bottom-right in the existing layout. Keep the map toggle
+     beside it when visible and at the upper right when auto-hidden. */
+  body:not(.minimap-is-hidden) #minimap-toggle {
+    top: auto;
+    bottom: calc(165px + 47px + 8px);
+  }
+  body.minimap-is-hidden #game-compass {
+    right: max(10px, env(safe-area-inset-right));
+  }
+  /* The compact HUD (including its 000 button) occupies the phone's top row.
+     Keep the hidden-map restore button below the geographic compass, not
+     behind that HUD: an actual Chromium tap must reach this control. */
+  body.minimap-is-hidden #minimap-toggle {
+    top: max(192px, calc(env(safe-area-inset-top) + 182px));
+    bottom: auto;
+  }
+  /* Avoid placing the ordinary Repository Town first-day card over the toggle.
+     In Narromine that card is deliberately hidden. */
+  body.minimap-is-hidden.compass-on #first-day {
+    top: max(248px, calc(env(safe-area-inset-top) + 238px));
+  }
+}
+@media (max-width: 370px) {
+  body.minimap-is-hidden #minimap-toggle {
+    top: max(192px, calc(env(safe-area-inset-top) + 182px));
+  }
+}
