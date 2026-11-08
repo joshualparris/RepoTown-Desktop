@@ -23,10 +23,10 @@ function scene(w, h, opts = {}) {
   // Width-aware type sizes: "REPOSITORY TOWN" is ~9.3em wide, the subtitle ~27em.
   const titleSize = Math.min(Math.round((opts.titleSize || 92) * (w > h ? 1 : 0.8)), Math.round(w / 10.8));
   const subSize = Math.min(Math.round((opts.subSize || 30) * (w > h ? 1 : 0.8)), Math.round(w / 30));
-  const noSub = opts.sub === false;
+  const noSub = true; // No slogans on base Steam artwork.
   const titleY = Math.round(h * (noSub ? 0.42 : 0.32));
   const subY = titleY + Math.round(titleSize * 0.78);
-  const s = Math.max(w, h) / 900;
+  const s = Math.min(Math.max(w, h) / 900, w / 950);
   // Isometric lot-grid town: rows auto-fit so nothing ever spills past the frame.
   const bw = 64 * s, bh = 34 * s, gapX = 26 * s, gapY = 18 * s;
   const cols = 9;
@@ -53,9 +53,9 @@ function scene(w, h, opts = {}) {
       + `<polygon points="${x},${y - hgt} ${x + bw * .5},${y - bh * .5 - hgt} ${x + bw},${y - hgt} ${x + bw * .5},${y + bh * .5 - hgt}" fill="#2b6d62"/></g>`);
   }
   const ground = `<rect x="${w * 0.08}" y="${Math.min(y0 + gridH - 4 * s, h - 8 * s)}" width="${w * 0.84}" height="${5 * s}" rx="${2.5 * s}" fill="${AMBER}" opacity="0.35"/>`;
-  const stars = opts.stars === false ? '' : `<text x="${w / 2}" y="${h * 0.15}" font-size="${Math.round(30 * s)}" fill="${AMBER}" text-anchor="middle" letter-spacing="${7 * s}">\u2605\u2605\u2605\u2605\u2605</text>`;
-  const sub = noSub ? '' : `<text x="${w / 2}" y="${subY}" font-family="system-ui, sans-serif" font-size="${subSize}" fill="${TEAL}" text-anchor="middle" textLength="${Math.round(w * 0.66)}" lengthAdjust="spacingAndGlyphs">A LIVING GRID OF NEIGHBOURS, WORK &amp; MEMORY</text>`;
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
+  const stars = ''; // Five stars could suggest an unearned review score.
+  const sub = ''; // No non-official marketing copy on capsules.
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
   <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${BG}"/><stop offset="1" stop-color="${BG2}"/></linearGradient></defs>
   <rect width="${w}" height="${h}" fill="url(#g)"/>
   <circle cx="${w * 0.82}" cy="${h * 0.16}" r="${Math.min(w, h) * 0.34}" fill="${TEAL}" opacity="0.08"/>
@@ -65,16 +65,26 @@ function scene(w, h, opts = {}) {
   ${sub}
   ${blocks.join('')}${ground}
 </svg>`;
+  return opts.title===false?svg.replace(/<text[^>]*>REPOSITORY TOWN<\/text>/,''):svg;
 }
 
 
 const SPECS = [
-  ['header.png', 916, 430, {}],
-  ['small.png', 462, 174, { stars: false, sub: false }],
-  ['main.png', 616, 353, {}],
-  ['library.png', 300, 170, { stars: false, sub: false }],
-  ['hero.png', 3840, 1240, {}],
+  ['header.png', 920, 430, {}],
+  ['small.png', 462, 174, {}],
+  ['main.png', 1232, 706, {}],
+  ['vertical.png', 748, 896, {}],
+  ['library.png', 600, 900, {}],
+  ['hero.png', 3840, 1240, { title: false }],
 ];
+function logoSvg() {
+  return '<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720">'
+    +'<text x="640" y="395" font-family="Georgia, serif" font-weight="bold"'
+    +' font-size="110" fill="#f3faf9" stroke="#0d1e29" stroke-width="4"'
+    +' paint-order="stroke fill" text-anchor="middle" textLength="1090"'
+    +' lengthAdjust="spacingAndGlyphs">REPOSITORY TOWN</text></svg>';
+}
+
 function iconSvg() {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512">
   <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${BG}"/><stop offset="1" stop-color="${BG2}"/></linearGradient></defs>
@@ -104,4 +114,13 @@ try {
   await page.setContent(`<body style="margin:0">${iconSvg()}</body>`);
   await page.screenshot({ path: path.join(root, 'desktop', 'assets', 'icon.png'), type: 'png' });
   console.log('wrote desktop/assets/icon.png (512x512)');
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.setContent('<body style="margin:0;background:transparent">'+logoSvg()+'</body>');
+  await page.screenshot({ path: path.join(outCaps,'library-logo.png'), type:'png', omitBackground:true });
+  console.log('wrote library-logo.png (1280x720, transparent)');
+  await page.setViewportSize({ width: 184, height: 184 });
+  await page.setContent('<body style="margin:0">'+iconSvg()+'</body>');
+  await page.screenshot({ path: path.join(outCaps,'community-icon.jpg'),type:'jpeg',quality:92 });
+  console.log('wrote community-icon.jpg (184x184)');
+
 } finally { await browser.close(); }

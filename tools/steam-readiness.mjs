@@ -60,9 +60,14 @@ const dims = async (p) => { // PNG header parse: width at offset 16, height 20
   try { const b = fs.readFileSync(path.join(root, p)); return { w: b.readUInt32BE(16), h: b.readUInt32BE(20) }; } catch { return null; }
 };
 const assetSpecs = [
-  ['store/capsules/header.png', 916, 430], ['store/capsules/small.png', 462, 174],
-  ['store/capsules/main.png', 616, 353], ['store/capsules/library.png', 300, 170],
-  ['store/capsules/hero.png', 3840, 1240],
+  ['store/capsules/header.png',920,430],
+  ['store/capsules/small.png',462,174],
+  ['store/capsules/main.png',1232,706],
+  ['store/capsules/vertical.png',748,896],
+  ['store/capsules/library.png',600,900],
+  ['store/capsules/hero.png',3840,1240],
+  ['store/capsules/library-logo.png',1280,720],
+  ['store/capsules/community-icon.jpg',184,184],
 ];
 for (const [p, w, h] of assetSpecs) {
   const d = await dims(p);
@@ -95,5 +100,5 @@ if (failed.length) {
   for (const f of failed) console.log(' - ' + f.name);
   process.exit(1);
 }
-console.log('\nEverything Josh controls locally is ready. Remaining items are the paid/manual');
-console.log('Steam Direct steps: App ID, $100 fee, 30-day review, depot upload, store page.');
+console.log('\nLocal technical/artwork checks passed. NOT commercial release approval.');
+console.log('Unresolved: first-hour playtesting, commercial rights, Steamworks/Valve onboarding and approval.');
