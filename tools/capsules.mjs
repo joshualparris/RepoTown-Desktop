@@ -119,7 +119,7 @@ try {
   await page.screenshot({ path: path.join(outCaps,'library-logo.png'), type:'png', omitBackground:true });
   console.log('wrote library-logo.png (1280x720, transparent)');
   await page.setViewportSize({ width: 184, height: 184 });
-  await page.setContent('<body style="margin:0">'+iconSvg()+'</body>');
+  await page.setContent('<body style="margin:0">'+iconSvg().replace('width="512" height="512"','width="184" height="184" viewBox="0 0 512 512"')+'</body>');
   await page.screenshot({ path: path.join(outCaps,'community-icon.jpg'),type:'jpeg',quality:92 });
   console.log('wrote community-icon.jpg (184x184)');
 
