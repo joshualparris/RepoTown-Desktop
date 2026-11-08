@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import {randomBytes} from 'node:crypto';
 import {chromium} from 'playwright';
-const url='https://repotown-desktop-preview.vercel.app/';
+const url=process.env.PUBLIC_PLAY_URL||'https://repotown-desktop-preview.vercel.app/';
 const suffix=randomBytes(4).toString('hex');
 const users=[
   {username:'steamqa_'+suffix+'a',password:randomBytes(20).toString('base64url')},
