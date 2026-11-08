@@ -4,6 +4,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
+import {fileURLToPath} from 'node:url';
 const source=path.resolve(process.argv[2]||'upstream/repository-town/dist/public');
 const destination=path.resolve(process.argv[3]||'game');
 if(!fs.existsSync(path.join(source,'index.html'))||!fs.existsSync(path.join(source,'houses.json')))
@@ -118,6 +119,22 @@ world.houses=world.houses.map(h=>{
 fs.writeFileSync(housesFile,JSON.stringify(world));
 // Note: future checks must reject unexpected private property shapes.
 console.log('Replaced '+privateProperties+' private-repository-derived properties with fictional templates.');
+
+// Desktop-specific first-day onboarding is reviewed source, not imported from
+// personal upstream projects. Keep it deterministic across each export.
+const overlayDir=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../desktop/overlay');
+for(const name of ['first-day.js','first-day.css']){
+  const sourceFile=path.join(overlayDir,name);
+  if(!fs.existsSync(sourceFile))throw Error('Missing reviewed onboarding asset: '+name);
+  fs.copyFileSync(sourceFile,path.join(destination,'ui','desktop-'+name));
+  copied++;totalBytes+=fs.statSync(sourceFile).size;
+}
+const htmlFile=path.join(destination,'index.html');
+const html=fs.readFileSync(htmlFile,'utf8');
+if(!html.includes('</head>'))throw Error('Missing HTML head; cannot install onboarding.');
+fs.writeFileSync(htmlFile,html.replace('</head>',
+  '<link rel="stylesheet" href="ui/desktop-first-day.css">\n'+
+  '<script defer src="ui/desktop-first-day.js"></script>\n</head>'));
 
 // Metadata is non-sensitive and provides a provenance record for reproducible releases.
 fs.writeFileSync(path.join(destination,'desktop-export.json'),JSON.stringify({
