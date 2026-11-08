@@ -9,6 +9,7 @@ const http=require('node:http');
 const {URL}=require('node:url');
 const steam=require('./steam.cjs');
 const achievements=require('./achievements.cjs');
+const {canUseGamePointerLock}=require('./pointer-permission.cjs');
 const PORT=8091;
 const HOST='127.0.0.1';
 const BASE='http://'+HOST+':'+PORT;
@@ -211,6 +212,14 @@ function windowForGame(){
   win.webContents.on('before-input-event',(event,input)=>{
     if(input.type!=='keyDown')return;
     if(input.key==='F11'||(input.alt&&input.key==='Enter')){event.preventDefault();win.setFullScreen(!win.isFullScreen());}
+    // Explicitly release captured mouse when Escape arrives. Chromium's
+    // default pointer-lock Escape gesture is inconsistent under Electron/
+    // automated Windows input; exitPointerLock does not need user activation.
+    if(input.key==='Escape'){
+      win.webContents.executeJavaScript(
+        'if (document.pointerLockElement) document.exitPointerLock()'
+      ).catch(()=>{});
+    }
   });
   win.on('resized',()=>writeWindowState(win));
   win.on('moved',()=>writeWindowState(win));
@@ -254,7 +263,26 @@ else {
         callback({cancel:!allowed});
       }catch{callback({cancel:true});}
     });
-    session.defaultSession.setPermissionRequestHandler((_contents,_permission,callback)=>callback(false));
+    // Chromium asks for 'pointerLock' before it can hide the cursor for
+    // first-person camera movement. Previously ALL permissions were denied,
+    // so L, Capture mouse and double-click could never actually capture it.
+    // Grant only this permission to the game's top-level local document.
+    const pointerPermission = (contents,permission,requestingUrl,isMainFrame,requestingOrigin) =>
+      canUseGamePointerLock({
+        contents, gameContents: win && !win.isDestroyed() ? win.webContents : null,
+        permission, requestingUrl, isMainFrame, requestingOrigin, gameOrigin: BASE
+      });
+    session.defaultSession.setPermissionRequestHandler((contents,permission,callback,details) => {
+      callback(pointerPermission(contents,permission,details?.requestingUrl,details?.isMainFrame));
+    });
+    // Electron also performs permission *checks* before some requests.
+    // When requestingUrl is unavailable, use the current main-frame URL
+    // only if Electron explicitly says this is the main frame.
+    session.defaultSession.setPermissionCheckHandler((contents,permission,origin,details) => {
+      const url=details?.requestingUrl ||
+        (details?.isMainFrame === true ? contents?.getURL?.() : undefined);
+      return pointerPermission(contents,permission,url,details?.isMainFrame,origin);
+    });
     // Steam (optional; no-op until steamworks.js + steam_appid.txt exist).
     steam.init(app);
     const steamStatus=steam.status();

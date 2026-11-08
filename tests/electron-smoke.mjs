@@ -65,6 +65,24 @@ try {
   await page.locator('#rt-guide-skip').click();
   assert.equal(await page.evaluate(()=>
     localStorage.getItem('repository-town.desktop-tutorial.v1')),'finished');
+  // Play the packaged Windows executable like a real desktop user. The
+  // previous blanket Electron permission denial made pointer lock impossible
+  // even though the browser game had the L/capture controls.
+  const gameCanvas=page.locator('canvas').first();
+  await gameCanvas.click({position:{x:450,y:300}});
+  await page.keyboard.press('l');
+  await page.waitForFunction(()=>document.pointerLockElement?.tagName==='CANVAS',
+    null,{timeout:12000});
+  assert.equal(await page.evaluate(()=>document.pointerLockElement===document.querySelector('canvas')),
+    true,'L must capture the real game canvas and hide/free the mouse cursor');
+  // The L key is the game's documented toggle. CDP's synthetic Escape is
+  // swallowed by Chromium while pointer-locked on Windows CI, so it cannot
+  // reliably exercise the native Esc release behaviour.
+  await page.keyboard.press('l');
+  await page.waitForFunction(()=>document.pointerLockElement===null,
+    null,{timeout:12000});
+  assert.equal(await page.evaluate(()=>document.pointerLockElement),null,
+    'L must release the captured mouse and restore the cursor');
   const backup=await page.evaluate(async()=>{
     const {exportProgress}=await import('./engine/save-transfer.js');
     const result=exportProgress(localStorage);

@@ -1,13 +1,13 @@
 {
   "name": "repotown-desktop",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "private": true,
   "description": "Rights-gated and quality-tested Windows Steam development candidate",
   "main": "desktop/main.cjs",
   "scripts": {
     "start": "electron .",
     "audit:privacy": "node tools/privacy-gate.mjs game",
-    "verify:desktop": "node --check desktop/main.cjs && node --check desktop/preload.cjs && node --check desktop/steam.cjs && node --check desktop/achievements.cjs && node --check desktop/progress.cjs && node --check desktop/overlay/first-day.js && node --check tools/privacy-gate.mjs && node --check tools/snapshot-public.mjs && node --check tools/steam-manifest.mjs && node --check tools/third-party-rights.mjs && npm run test:progress && node tools/verify-desktop.mjs && npm run test:steam-gate && npm run test:gamepad && npm run test:offline && npm run test:rights",
+    "verify:desktop": "node --check desktop/main.cjs && node --check desktop/pointer-permission.cjs && node --test tests/pointer-permission.test.cjs && node --check desktop/preload.cjs && node --check desktop/steam.cjs && node --check desktop/achievements.cjs && node --check desktop/progress.cjs && node --check desktop/overlay/first-day.js && node --check tools/privacy-gate.mjs && node --check tools/snapshot-public.mjs && node --check tools/steam-manifest.mjs && node --check tools/third-party-rights.mjs && npm run test:progress && node tools/verify-desktop.mjs && npm run test:steam-gate && npm run test:gamepad && npm run test:offline && npm run test:rights",
     "package:windows": "electron-builder --win nsis zip --x64",
     "test:electron": "node tests/electron-smoke.mjs",
     "test:steam-ready": "npm run verify:desktop && npm run audit:privacy && node tests/steam-achievements.test.mjs && npm run test:steam-bridge",
