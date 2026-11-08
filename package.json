@@ -1,8 +1,8 @@
 {
   "name": "repotown-desktop",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "private": true,
-  "description": "Privacy-screened Repository Town desktop Steam playtest candidate",
+  "description": "Rights-gated and quality-tested Windows Steam development candidate",
   "main": "desktop/main.cjs",
   "scripts": {
     "start": "electron .",
@@ -17,7 +17,8 @@
     "test:steam-gate": "node --check tools/steam-release-gate.mjs",
     "test:gamepad": "node --test tests/gamepad.mjs",
     "test:offline": "node --test tests/offline-interactions.mjs",
-    "test:rights": "node tools/third-party-rights.mjs"
+    "test:rights": "node tools/third-party-rights.mjs",
+    "test:quality": "node tests/steam-quality.mjs"
   },
   "devDependencies": {
     "electron": "39.0.0",

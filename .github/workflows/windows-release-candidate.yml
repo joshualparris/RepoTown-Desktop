@@ -6,6 +6,8 @@ on:
       - 'desktop/**'
       - 'game/**'
       - 'tests/electron-smoke.mjs'
+      - 'tests/steam-quality.mjs'
+      - 'tools/third-party-rights.mjs'
       - 'tools/privacy-gate.mjs'
       - 'tools/steam-manifest.mjs'
       - 'package.json'
@@ -33,6 +35,14 @@ jobs:
         run: npm run package:windows
       - name: Launch the real packaged executable
         run: npm run test:electron
+      - name: Test town simulation, NPC dispersion and real fictional home entrance
+        run: npm run test:quality
+      - name: Save in-game quality evidence for reviewer
+        uses: actions/upload-artifact@v4
+        with:
+          name: RepoTown-Windows-quality-evidence
+          path: release/playtest-evidence/
+          retention-days: 30
       - name: Upload tested ZIP artifact
         uses: actions/upload-artifact@v4
         with:

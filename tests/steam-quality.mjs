@@ -95,7 +95,7 @@ try{
   await page.screenshot({path:'release/playtest-evidence/fictional-home.png',
     animations:'disabled',timeout:15000}).catch(()=>{});
   const evidence={source:'packaged Windows Electron game (SwiftShader CI)',
-    buildVersion:'0.3.0',before:{houses:before.houses,residents:before.people.length,
+    buildVersion:'0.3.1',before:{houses:before.houses,residents:before.people.length,
       firstDay:before.firstDay,mapCredit:before.credit},
     render:report,simulation:advanced,home:{id:home,...room},
     importantLimits:[

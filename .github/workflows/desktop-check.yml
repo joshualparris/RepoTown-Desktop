@@ -41,6 +41,9 @@ jobs:
       - name: Test the actual packaged Windows executable and local save reload
         if: steps.snapshot.outputs.found == 'true'
         run: npm run test:electron
+      - name: Prove real town simulation and explorable residence in Windows executable
+        if: steps.snapshot.outputs.found == 'true'
+        run: npm run test:quality
       - if: steps.snapshot.outputs.found == 'true'
         uses: actions/upload-artifact@v4
         with:
