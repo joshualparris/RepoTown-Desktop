@@ -1,0 +1,8 @@
+#rt-map-credit{position:fixed;bottom:5px;left:7px;z-index:118;
+  font:11px/1.35 system-ui,-apple-system,"Segoe UI",sans-serif;
+  color:#e8f1f3;background:rgba(13,27,39,.78);
+  border-radius:5px;padding:3px 6px;max-width:55vw;
+  pointer-events:auto;backdrop-filter:blur(3px)}
+#rt-map-credit a{color:#ddf4f3;text-decoration:underline;text-underline-offset:2px}
+#rt-map-credit a:focus-visible{outline:2px solid #ffdf7b;outline-offset:2px}
+@media(max-width:600px){#rt-map-credit{font-size:10px;bottom:4px;max-width:60vw}}
