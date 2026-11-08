@@ -39,6 +39,17 @@ try {
     'desktop must include safe backup and restore actions');
   await page.waitForSelector('#rt-desktop-guide',{timeout:10000});
   assert.match(await page.locator('#rt-guide-title').textContent(),/Welcome/);
+  await page.locator('#rt-guide-next').click();
+  // Actual gameplay rather than a mock: walk in the live 3D world until the
+  // guide sees a real position change.
+  const initial=await page.evaluate(()=>window.__town.state().pos);
+  await page.keyboard.down('w');
+  await page.waitForTimeout(1400);
+  await page.keyboard.up('w');
+  const after=await page.evaluate(()=>window.__town.state().pos);
+  assert(Math.hypot(after.x-initial.x,after.z-initial.z)>0.4,
+    'W must physically move the character in the packaged game');
+  await page.waitForFunction(()=>document.getElementById('rt-guide-title')?.textContent?.includes('2 of 3'),null,{timeout:15000});
   await page.locator('#rt-guide-skip').click();
   assert.equal(await page.evaluate(()=>
     localStorage.getItem('repository-town.desktop-tutorial.v1')),'finished');
