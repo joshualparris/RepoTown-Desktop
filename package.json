@@ -10,7 +10,7 @@
     "verify:desktop": "node --check desktop/main.cjs && node --check desktop/preload.cjs && node --check desktop/steam.cjs && node --check desktop/achievements.cjs && node --check desktop/progress.cjs && node --check desktop/overlay/first-day.js && node --check tools/privacy-gate.mjs && node --check tools/snapshot-public.mjs && node --check tools/steam-manifest.mjs && node --check tools/third-party-rights.mjs && npm run test:progress && node tools/verify-desktop.mjs && npm run test:steam-gate && npm run test:gamepad && npm run test:offline && npm run test:rights",
     "package:windows": "electron-builder --win nsis zip --x64",
     "test:electron": "node tests/electron-smoke.mjs",
-    "test:steam-ready": "npm run verify:desktop && npm run audit:privacy && node tests/steam-achievements.test.mjs",
+    "test:steam-ready": "npm run verify:desktop && npm run audit:privacy && node tests/steam-achievements.test.mjs && npm run test:steam-bridge",
     "steam:manifest": "node tools/steam-manifest.mjs",
     "steam:ready": "node tools/steam-readiness.mjs",
     "store:screenshots": "node tools/screenshots.mjs",
@@ -22,7 +22,8 @@
     "test:gamepad": "node --test tests/gamepad.mjs",
     "test:offline": "node --test tests/offline-interactions.mjs",
     "test:rights": "node tools/third-party-rights.mjs",
-    "test:quality": "node tests/steam-quality.mjs"
+    "test:quality": "node tests/steam-quality.mjs",
+    "test:steam-bridge": "node tests/steam-bridge.test.mjs"
   },
   "devDependencies": {
     "electron": "39.0.0",

@@ -43,11 +43,11 @@ function detectAppId(app) {
   return null;
 }
 
-function init(app) {
+function init(app, libraryLoader = () => require('steamworks.js')) {
   if (session || lastError) return status();
   appId = detectAppId(app);
   try {
-    steamworks = require('steamworks.js');
+    steamworks = libraryLoader();
   } catch (e) {
     lastError = 'steamworks.js not installed (expected until Steam onboarding): ' + e.code;
     log('[steam] ' + lastError);
@@ -59,7 +59,7 @@ function init(app) {
     return status();
   }
   try {
-    session = steamworks.init(appId);
+    session = steamworks.init(Number(appId));
     log('[steam] Steamworks initialised (app ' + appId + ')');
   } catch (e) {
     lastError = 'Steamworks init failed (is the Steam client running?): ' + e.message;
@@ -76,17 +76,19 @@ function status() {
 function unlock(id) {
   if (!session) return false;
   try {
-    steamworks.activateAchievement(id); // steamworks.js API: idempotent server-side
-    return true;
+    // steamworks.js exposes achievements on the *client returned by init()*.
+    // It does not expose steamworks.activateAchievement at module scope.
+    const result = session.achievement?.activate?.(id);
+    return result === true;
   } catch (e) {
-    log('[steam] activateAchievement(' + id + ') failed: ' + e.message);
+    log('[steam] client.achievement.activate(' + id + ') failed: ' + e.message);
     return false;
   }
 }
 
 function shutdown() {
   if (!session) return;
-  try { steamworks.shutdown(); } catch { /* ignore */ }
+  try { steamworks?.shutdown?.(); } catch { /* ignore */ }
   session = null;
 }
 
