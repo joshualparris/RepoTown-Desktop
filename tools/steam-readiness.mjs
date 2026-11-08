@@ -56,22 +56,25 @@ check('>= 10 achievements', ACHIEVEMENTS.length >= 10, ACHIEVEMENTS.length + ' d
 check('>= 10 offline-reachable achievements', ACHIEVEMENTS.filter(a => !['GOING_PUBLIC', 'PLAY_TOGETHER'].includes(a.id)).length >= 10, '');
 
 // --- 5. store assets (dims verified when images exist) ---
-const dims = async (p) => { // PNG (IHDR) and JPEG (SOF marker) dimension parse
+const dims = async (p) => {
   try {
-    const b = fs.readFileSync(path.join(root, p));
-    if (b[0] === 0x89 && b[1] === 0x50) return { w: b.readUInt32BE(16), h: b.readUInt32BE(20) }; // PNG IHDR
-    if (b[0] === 0xFF && b[1] === 0xD8) { // JPEG: walk segments to first SOF
-      let i = 2;
-      while (i < b.length - 8) {
-        if (b[i] !== 0xFF) { i++; continue; }
-        const m = b[i + 1], len = b.readUInt16BE(i + 2);
-        if (m >= 0xC0 && m <= 0xCF && m !== 0xC4 && m !== 0xC8 && m !== 0xCC)
-          return { h: b.readUInt16BE(i + 5), w: b.readUInt16BE(i + 7) };
-        i += 2 + len;
+    const b=fs.readFileSync(path.join(root,p));
+    if(b.subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10])))
+      return {w:b.readUInt32BE(16),h:b.readUInt32BE(20)};
+    if(b[0]===0xff && b[1]===0xd8){
+      let i=2;
+      while(i<b.length-10){
+        if(b[i]!==0xff){i++;continue;}
+        const marker=b[i+1];
+        if([0xc0,0xc1,0xc2,0xc3,0xc5,0xc6,0xc7,0xc9,0xca,0xcb].includes(marker))
+          return {w:b.readUInt16BE(i+7),h:b.readUInt16BE(i+5)};
+        const len=b.readUInt16BE(i+2);
+        if(!len||len>b.length-i)break;
+        i+=len+2;
       }
     }
     return null;
-  } catch { return null; }
+  }catch{return null;}
 };
 const assetSpecs = [
   ['store/capsules/header.png',920,430],
