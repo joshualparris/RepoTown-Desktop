@@ -10,7 +10,8 @@
     "verify:desktop": "node --check desktop/main.cjs && node --check tools/privacy-gate.mjs && node --check tools/snapshot-public.mjs && node tools/verify-desktop.mjs",
     "package:windows": "electron-builder --win zip --x64",
     "test:electron": "node tests/electron-smoke.mjs",
-    "test:steam-ready": "npm run verify:desktop && npm run audit:privacy"
+    "test:steam-ready": "npm run verify:desktop && npm run audit:privacy",
+    "steam:manifest": "node tools/steam-manifest.mjs"
   },
   "devDependencies": {
     "electron": "39.0.0",
