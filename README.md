@@ -6,9 +6,11 @@ This repository is intentionally **separate from the live web game and its devel
 
 ## Play the game
 
-- **[Play the browser preview](https://repotown-desktop-preview.vercel.app/)** — public, no Steam installation required. This copy is built from the privacy-screened desktop game snapshot; best tried on a laptop or desktop.
-- **[Download the verified Windows playtest build](https://github.com/joshualparris/RepoTown-Desktop/releases)** — select the latest Windows *prerelease*, download the ZIP, extract it, and launch `Repository Town.exe`. No Steam account is required. It has passed an actual packaged Electron game-load and local-storage-reload test.
+- **[Play the independently hosted Steam-edition preview](https://joshualparris.github.io/repository-town/steam-preview/)** — public, no Steam installation required. GitHub Pages is verified by a real Chromium game startup and privacy test; best on a computer. The [Vercel preview](https://repotown-desktop-preview.vercel.app/) is a backup that may lag the latest edition when deployment limits are reached.
+- **[Download the verified Windows 0.3.0 ZIP](https://github.com/joshualparris/RepoTown-Desktop/releases/download/windows-playtest-6008c5ec/RepoTown-Desktop-0.3.0-x64.zip)** — extract it and launch `Repository Town.exe`. New versions can be found on [Releases](https://github.com/joshualparris/RepoTown-Desktop/releases). No Steam account is required. It has passed an actual packaged Electron game-load and local-storage-reload test.
 - **Status:** playable development build, **not** a released Steam product. Steamworks onboarding, commercial asset rights, a complete shared-world simulation, and gameplay polish are still required.
+
+The [independent GitHub Pages test](https://github.com/joshualparris/RepoTown-Desktop/actions/workflows/verify-steam-pages.yml) rechecks online loading, the 188-house world, fictionalised private-house placeholders, working offline interactions and game save transfer every day.
 
 ## Desktop candidate 0.3
 
