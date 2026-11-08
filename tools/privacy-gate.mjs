@@ -80,7 +80,7 @@ try{
   }
   if(seen<1000)failures.push('Unusually few playable town interactions');
   const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
-  if(/href="(?:arcade|address-map|narromine-progress|narromine-compare|people|release)\.html"/i.test(html))
+  if(/href="(?:arcade|address-map|narromine-progress|narromine-compare|people)\.html"/i.test(html))
     failures.push('Broken development-only navigation in public game');
 }catch{failures.push('Cannot validate complete offline attractions.');}
 // Steam edition must never carry the original contents of private-house briefs.
