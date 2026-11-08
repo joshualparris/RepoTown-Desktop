@@ -82,6 +82,43 @@ function walk(dir){
   }
 }
 walk(source);
+// Public web releases still contain cosmetic representations of private houses.
+// For the commercial edition, replace ALL private house labels, briefs, layout,
+// exhibits and repo references with hand-authored fictional data. The only
+// preserved fields are public map coordinates and public street names.
+const housesFile=path.join(destination,'houses.json');
+const world=JSON.parse(fs.readFileSync(housesFile,'utf8'));
+let privateProperties=0;
+world.houses=world.houses.map(h=>{
+  if(h.visibility!=='private')return h;
+  privateProperties++;
+  const id=h.coordinate;
+  return {
+    coordinate:id,repo:null,name:'Town Residence '+id,
+    visibility:'private',street:h.street,kind:'Fictional residence',
+    summary:'A fictional home in Repository Town.',links:[],
+    ext:{
+      style:'cottage',walls:13156528,roof:9079434,trim:15245370,
+      door:6974058,features:['trees','fence']
+    },
+    int:{
+      layout:'deep',floor:11053224,walls:15245370,light:14540253,
+      doors:8018492,ceiling:15921128,
+      rooms:[
+        {name:'Living Room',w:8,d:8,props:[
+          ['chair','Chair',null],['table','Table',null],['bookshelf','Bookshelf',null]
+        ]},
+        {name:'Bedroom',w:7,d:7,props:[
+          ['bed','Bed',null],['lamp','Lamp',null]
+        ]}
+      ]
+    }
+  };
+});
+fs.writeFileSync(housesFile,JSON.stringify(world));
+// Note: future checks must reject unexpected private property shapes.
+console.log('Replaced '+privateProperties+' private-repository-derived properties with fictional templates.');
+
 // Metadata is non-sensitive and provides a provenance record for reproducible releases.
 fs.writeFileSync(path.join(destination,'desktop-export.json'),JSON.stringify({
   format:1,kind:'sanitised-runtime-only',releaseType:'development',
