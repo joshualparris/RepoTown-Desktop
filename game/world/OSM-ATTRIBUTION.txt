@@ -1,0 +1,18 @@
+OpenStreetMap contributors (ODbL 1.0) — data attribution
+
+Parts of the Narromine road network, mapped building footprints, place
+locations and related town geometry are based on OpenStreetMap data.
+© OpenStreetMap contributors.
+Original ODbL copyright/licence information:
+https://www.openstreetmap.org/copyright
+Licence and derivative-database conditions:
+https://opendatacommons.org/licenses/odbl/1-0/
+
+This file accompanies the distributed game data. The on-screen game view
+also displays a link to OpenStreetMap copyright information.
+
+IMPORTANT: The scope, extraction timestamps, provenance and whether this
+commercial game's transformed building/database data constitute an ODbL
+Derivative Database must be reviewed before the publisher certifies all
+commercial rights. This file alone does not resolve share-alike obligations,
+third-party photo evidence or unrelated mapping sources.

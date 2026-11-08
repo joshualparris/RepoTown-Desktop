@@ -126,7 +126,7 @@ console.log('Replaced '+privateProperties+' private-repository-derived propertie
 // Desktop-specific first-day onboarding is reviewed source, not imported from
 // personal upstream projects. Keep it deterministic across each export.
 const overlayDir=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../desktop/overlay');
-for(const name of ['first-day.js','first-day.css']){
+for(const name of ['first-day.js','first-day.css','credits.js','credits.css']){
   const sourceFile=path.join(overlayDir,name);
   if(!fs.existsSync(sourceFile))throw Error('Missing reviewed onboarding asset: '+name);
   fs.copyFileSync(sourceFile,path.join(destination,'ui','desktop-'+name));
@@ -153,6 +153,10 @@ for(const notice of [
   if(!fs.existsSync(src))throw Error('Missing mandatory dependency notice: '+notice);
   fs.copyFileSync(src,path.join(destination,'vendor',notice));
 }
+const osmNotice=path.resolve(path.dirname(fileURLToPath(import.meta.url)),
+  '../desktop/overrides/world/OSM-ATTRIBUTION.txt');
+if(!fs.existsSync(osmNotice))throw Error('Required OSM source notice missing');
+fs.copyFileSync(osmNotice,path.join(destination,'world','OSM-ATTRIBUTION.txt'));
 const reviewedSavePage=path.join(overlayDir,'release.html');
 if(!fs.existsSync(reviewedSavePage))throw Error('Missing safe save-transfer page');
 fs.copyFileSync(reviewedSavePage,path.join(destination,'release.html'));
@@ -167,7 +171,9 @@ const safeHtml=html.replace(/<a\s+id="settings-save-transfer"[^>]*>[\s\S]*?<\/a>
 if(!safeHtml.includes('id="settings-save-transfer"'))throw Error('Required backup Settings control absent');
 fs.writeFileSync(htmlFile,safeHtml.replace('</head>',
   '<link rel="stylesheet" href="ui/desktop-first-day.css">\n'+
-  '<script defer src="ui/desktop-first-day.js"></script>\n</head>'));
+  '<script defer src="ui/desktop-first-day.js"></script>\n'+
+  '<link rel="stylesheet" href="ui/desktop-credits.css">\n'+
+  '<script defer src="ui/desktop-credits.js"></script>\n</head>'));
 
 // Metadata is non-sensitive and provides a provenance record for reproducible releases.
 fs.writeFileSync(path.join(destination,'desktop-export.json'),JSON.stringify({

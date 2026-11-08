@@ -82,6 +82,14 @@ for(const part of ['ui','dialogue','world','engine','multiplayer']){
     }
   }
 }
+assert(fs.existsSync('game/world/OSM-ATTRIBUTION.txt'),'Map data ODbL notice absent');
+assert(fs.readFileSync('game/world/OSM-ATTRIBUTION.txt','utf8').includes('OpenStreetMap'),'OSM attribution missing');
+const html=fs.readFileSync('game/index.html','utf8');
+assert(html.includes('ui/desktop-credits.js')&&html.includes('ui/desktop-credits.css'),
+  'No visible game OSM credit; this cannot be commercially published');
+const cred=fs.readFileSync('game/ui/desktop-credits.js','utf8');
+assert(cred.includes('OpenStreetMap')&&cred.includes('openstreetmap.org/copyright'),
+  'OSM attribution must identify the data source and licence');
 console.log('DEPENDENCY RIGHTS GATE PASS: '+assetFiles+' assets across '+JSON.stringify(assetGroups)+
   '; Three.js MIT + HLS Apache-2.0 notices included; recordings excluded.');
 console.log('First-party content, local map, store brands and AI disclosure remain a human rights review.');

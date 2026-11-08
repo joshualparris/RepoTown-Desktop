@@ -20,7 +20,14 @@ if(hasGame){
   assert(html.includes('id="settings-save-transfer"'),
     'Settings save control required by game startup');
   assert(fs.existsSync('game/release.html'),'local browser save page must be included');
-    assert(html.includes('ui/desktop-first-day.js'),
+    assert(html.includes('ui/desktop-credits.js')&&html.includes('ui/desktop-credits.css'),
+    'OpenStreetMap credit must be visible in commercial game');
+  assert(fs.existsSync('game/world/OSM-ATTRIBUTION.txt'),
+    'OSM map data licence information must accompany game data');
+  assert.equal(fs.readFileSync('game/ui/desktop-credits.js','utf8'),
+    fs.readFileSync('desktop/overlay/credits.js','utf8'),
+    'OSM credit code must not drift between source and export');
+  assert(html.includes('ui/desktop-first-day.js'),
     'first-day onboarding must survive the privacy export');
   console.log('Desktop snapshot structure verified.');
 }else console.log('Desktop shell verified. Game snapshot not yet exported (first workflow will create it).');
