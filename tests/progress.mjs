@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import {createRequire} from 'node:module';
+import {SAVE_KEYS} from '../game/engine/save-transfer.js';
 const require=createRequire(import.meta.url);
 const {KEY_SET,validateSave,writeBackup}=require('../desktop/progress.cjs');
 const base={format:'repository-town-progress',version:1,entries:{
@@ -11,6 +12,8 @@ const base={format:'repository-town-progress',version:1,entries:{
 test('valid game save',()=>{
   assert.deepEqual(validateSave(JSON.stringify(base)),base);
   assert.equal(KEY_SET.size,8);
+  assert.deepEqual([...KEY_SET].sort(),[...SAVE_KEYS].sort(),
+    'desktop must never drift from the game engine save-item allowlist');
 });
 test('credentials, unsupported keys and malformed objects are refused',()=>{
   for(const payload of [
