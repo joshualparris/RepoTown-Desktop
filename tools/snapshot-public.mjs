@@ -5,6 +5,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
 import {fileURLToPath} from 'node:url';
+import {sanitiseOfflineContent} from './sanitise-interactions.mjs';
 const source=path.resolve(process.argv[2]||'upstream/repository-town/dist/public');
 const destination=path.resolve(process.argv[3]||'game');
 if(!fs.existsSync(path.join(source,'index.html'))||!fs.existsSync(path.join(source,'houses.json')))
@@ -116,7 +117,9 @@ world.houses=world.houses.map(h=>{
     }
   };
 });
-fs.writeFileSync(housesFile,JSON.stringify(world));
+const offline=sanitiseOfflineContent(world);
+fs.writeFileSync(housesFile,JSON.stringify(offline.world));
+console.log('Converted '+offline.converted+' unavailable remote exhibits and removed '+offline.removedLinks+' external links.');
 // Note: future checks must reject unexpected private property shapes.
 console.log('Replaced '+privateProperties+' private-repository-derived properties with fictional templates.');
 
