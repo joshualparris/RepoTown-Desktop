@@ -212,6 +212,14 @@ function windowForGame(){
   win.webContents.on('before-input-event',(event,input)=>{
     if(input.type!=='keyDown')return;
     if(input.key==='F11'||(input.alt&&input.key==='Enter')){event.preventDefault();win.setFullScreen(!win.isFullScreen());}
+    // Explicitly release captured mouse when Escape arrives. Chromium's
+    // default pointer-lock Escape gesture is inconsistent under Electron/
+    // automated Windows input; exitPointerLock does not need user activation.
+    if(input.key==='Escape'){
+      win.webContents.executeJavaScript(
+        'if (document.pointerLockElement) document.exitPointerLock()'
+      ).catch(()=>{});
+    }
   });
   win.on('resized',()=>writeWindowState(win));
   win.on('moved',()=>writeWindowState(win));
