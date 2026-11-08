@@ -28,7 +28,7 @@ on:
   schedule:
     - cron: '0 3 * * 1' # weekly drift check (assets, snapshot, docs)
 permissions:
-  contents: read
+  contents: write
 concurrency:
   group: steam-readiness
   cancel-in-progress: false
@@ -55,6 +55,16 @@ jobs:
         run: xvfb-run -a npm run test:desktop-achievements
       - name: Regenerate capsule artwork (dimension check)
         run: npm run store:capsules
+      - name: Commit exact-size Steam artwork after validation on main
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git config user.name 'github-actions[bot]'
+          git add store/capsules desktop/assets/icon.png
+          if ! git diff --cached --quiet; then
+            git commit -m 'art(steam): regenerate exact-size compliant base artwork [skip ci]'
+            git push origin HEAD:main
+          fi
       - name: Steam readiness gate (build config, assets, integration surface)
         run: npm run steam:ready
       - name: Upload readiness report and store assets
