@@ -1,0 +1,26 @@
+name: Steam preview live two-account multiplayer
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'game/**'
+      - 'tests/hosted-multiplayer.mjs'
+      - '.github/workflows/hosted-multiplayer.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  live-public-two-accounts:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Install browser
+        run: npx playwright install --with-deps chromium
+      - name: Verify actual public co-presence from independent browser contexts
+        run: node tests/hosted-multiplayer.mjs
