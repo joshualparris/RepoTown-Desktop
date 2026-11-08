@@ -45,12 +45,8 @@ jobs:
         run: npm install --no-audit --no-fund
       - name: Ensure Playwright Chromium is present
         run: npx playwright install chromium --with-deps || npx playwright install chromium
-      - name: Install Xvfb for the Electron shell test
-        run: sudo apt-get update && sudo apt-get install -y xvfb
       - name: Shell syntax, privacy gate and achievement tests
         run: npm run test:steam-ready
-      - name: Electron shell end-to-end (achievements bridge)
-        run: xvfb-run -a npm run test:desktop-achievements
       - name: Regenerate capsule artwork (dimension check)
         run: npm run store:capsules
       - name: Steam readiness gate (build config, assets, integration surface)
@@ -63,3 +59,16 @@ jobs:
             store/capsules
             store/screenshots
           if-no-files-found: error
+  windows-electron-achievements:
+    runs-on: windows-2022
+    needs: readiness
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Exercise Electron achievement bridge on actual Windows
+        run: npm run test:desktop-achievements
