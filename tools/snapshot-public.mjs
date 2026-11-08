@@ -11,7 +11,7 @@ if(!fs.existsSync(path.join(source,'index.html'))||!fs.existsSync(path.join(sour
 const rootNames=new Set([
   'index.html','main.js','styles.css','npc.css',
   'houses.json','narromine-building-inventory.json','narromine-photo-references.json',
-  'arcade.css','arcade.html','arcade.js'
+  // Arcade child-project bundles are not included pending rights review.
 ]);
 const allowedDirs=new Set(['adventure','assets','dialogue','engine','multiplayer','ui','vendor','world']);
 const allowedAssets=/^assets\/(?:furniture|people|vehicles)\//;
@@ -27,6 +27,24 @@ const blocked=new Set([
   'dc25495e787508d4f8306c31501a86e2dbbf5b60673978b0a6a7b0a4269df892',
   '6ac6524fe15efb5449ac69788a740fbe755122d2baf89cf85b6ea460fd525382'
 ]);
+const sensitivePhrases=new Set([
+  'f4183d581d46109a0aa96b4cd248a421d7cad93355d90e0dfe784ccc0c88f146',
+  '68237f0fd4ce717c6ac85c8cb396a1d864263666cdba255679f9f54af39d0c27',
+  '3c4fc5f23a90707c2fb8a74887d6a6256c427cb11e9957dc212154ccefed9a00'
+]);
+function redactLocationPhrases(str){
+  const words=[...str.matchAll(/\b[a-z][a-z0-9_-]*\b/gi)],spans=[];
+  for(let i=0;i<words.length;i++)for(const count of [3,2]){
+    if(i+count>words.length)continue;
+    const cluster=words.slice(i,i+count);
+    if(!cluster.every((w,j)=>j===0||/^\s+$/.test(str.slice(cluster[j-1].index+cluster[j-1][0].length,w.index))))continue;
+    const phrase=cluster.map(x=>x[0].toLowerCase()).join(' ');
+    if(sensitivePhrases.has(hash(phrase)))spans.push([cluster[0].index,cluster.at(-1).index+cluster.at(-1)[0].length]);
+  }
+  let result=str;
+  for(const [a,b] of spans.sort((x,y)=>y[0]-x[0]))result=result.slice(0,a)+'[location redacted]'+result.slice(b);
+  return result;
+}
 function sanitise(body,rel){
   let content=body.replace(/[\w.+%-]+@[\w.-]+\.[a-z]{2,}/gi,'[email redacted]');
   content=content.replace(/\b(?:\+?61|0)4\d{8}\b/g,'[phone redacted]');
@@ -36,7 +54,7 @@ function sanitise(body,rel){
     content=content.replace(/<script\b[^>]*\bsrc="ui\/analytics\.js"[^>]*><\/script>/gi,'');
     content=content.replace(/<a\b[^>]*href="arcade\.html"[^>]*>.*?<\/a>/gi,'');
   }
-  return content;
+  return redactLocationPhrases(content);
 }
 fs.rmSync(destination,{recursive:true,force:true});fs.mkdirSync(destination,{recursive:true});
 let copied=0,skipped=0,totalBytes=0;
