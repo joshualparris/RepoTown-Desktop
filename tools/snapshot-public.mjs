@@ -147,7 +147,7 @@ const html=fs.readFileSync(htmlFile,'utf8');
 if(!html.includes('</head>'))throw Error('Missing HTML head; cannot install onboarding.');
 // Keep the required Settings control: main.js assigns onclick to this ID.
 // Replace the original target=_blank link with same-window, local-only backup.
-const safeHtml=html.replace(/<a\\s+id="settings-save-transfer"[^>]*>[\\s\\S]*?<\\/a>/gi,
+const safeHtml=html.replace(/<a\s+id="settings-save-transfer"[^>]*>[\s\S]*?<\/a>/gi,
   '<a id="settings-save-transfer" class="btn-link" href="release.html">Back up or restore saved progress</a>');
 if(!safeHtml.includes('id="settings-save-transfer"'))throw Error('Required backup Settings control absent');
 fs.writeFileSync(htmlFile,safeHtml.replace('</head>',
