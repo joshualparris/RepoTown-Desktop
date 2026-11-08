@@ -26,7 +26,7 @@
     const render=()=>{
       const stages=[
         ['Welcome to Repository Town','Explore a working town at your own pace. We will start with walking, finding shops and checking your wallet.'],
-        ['1 of 3 — Take a walk','Press W/A/S/D or the arrow keys to walk about two metres. Hold Shift to run.'],
+        ['1 of 3 — Take a walk','Press W/A/S/D, arrow keys, or the controller left stick to walk. Hold Shift or the right shoulder button to run.'],
         ['2 of 3 — Find places to visit','Expand the town controls (+), then open 🗺️ Map to find buildings and places.'],
         ['3 of 3 — Check your wallet','Expand town controls (+), then open 💳 Wallet. Jobs earn money you can spend around town.'],
         ['You’re ready to explore','You can now visit businesses, accept jobs, meet locals and explore. Game → Back up progress (desktop) keeps a copy of your save.']
