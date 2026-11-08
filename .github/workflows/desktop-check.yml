@@ -20,17 +20,26 @@ jobs:
   windows-package:
     runs-on: windows-2022
     needs: safe-source
-    if: hashFiles('game/index.html') != ''
     steps:
       - uses: actions/checkout@v4
+      - name: Detect existing privacy-approved snapshot
+        id: snapshot
+        shell: pwsh
+        run: |
+          if (Test-Path 'game/index.html') { 'found=true' | Out-File -FilePath $env:GITHUB_OUTPUT -Append }
+          else { 'found=false' | Out-File -FilePath $env:GITHUB_OUTPUT -Append }
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: npm install --no-audit --no-fund
+      - if: steps.snapshot.outputs.found == 'true'
+        run: npm install --no-audit --no-fund
       - run: npm run verify:desktop
-      - run: npm run audit:privacy
-      - run: npm run package:windows
-      - uses: actions/upload-artifact@v4
+      - if: steps.snapshot.outputs.found == 'true'
+        run: npm run audit:privacy
+      - if: steps.snapshot.outputs.found == 'true'
+        run: npm run package:windows
+      - if: steps.snapshot.outputs.found == 'true'
+        uses: actions/upload-artifact@v4
         with:
           name: RepoTown-Desktop-windows-development
           path: release/*.zip
