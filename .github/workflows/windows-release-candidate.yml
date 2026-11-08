@@ -43,6 +43,31 @@ jobs:
           name: RepoTown-Windows-quality-evidence
           path: release/playtest-evidence/
           retention-days: 30
+      - name: Generate SHA-256 checksums for the exact Windows release files
+        shell: pwsh
+        run: |
+          $files = @(Get-ChildItem -Path release -File | Where-Object { $_.Name -match '^(RepoTown-Desktop-.*-x64\\.zip|RepositoryTown-Setup-.*\\.exe)        uses: actions/upload-artifact@v4
+        with:
+          name: RepoTown-Desktop-tested-Windows
+          path: |
+            release/RepoTown-Desktop-*.zip
+            release/RepositoryTown-Setup-*.exe
+            release/SHA256SUMS.txt
+          retention-days: 30
+      - name: Publish durable GitHub prerelease for playtesting
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = "windows-playtest-$($env:GITHUB_SHA.Substring(0,8))"
+          gh release create $tag release/RepoTown-Desktop-*.zip release/RepositoryTown-Setup-*.exe release/SHA256SUMS.txt --prerelease --title "Repository Town Windows playtest ($tag)" --notes "Verified unsigned development ZIP and Windows installer; NOT a Steam release. Privacy scan passed; real Windows executable, WebGL world and local-save reload passed. Extract ZIP and run Repository Town.exe. Current multiplayer is shared player presence only. Commercial rights and Steamworks review remain open."
+ })
+          if ($files.Count -ne 2) { throw "Expected Windows installer and ZIP, found $($files.Count)." }
+          $lines = $files | Sort-Object Name | ForEach-Object {
+            $hash = (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+            "$hash  $($_.Name)"
+          }
+          Set-Content -Path release/SHA256SUMS.txt -Value $lines -Encoding utf8
       - name: Upload tested ZIP artifact
         uses: actions/upload-artifact@v4
         with:
