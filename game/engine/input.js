@@ -7,6 +7,7 @@ export class Input {
     this.stick = { x: 0, y: 0 };
     this.taps = []; this.auto = null;   // tap-to-walk: screen taps waiting, and the route-following move
     this.pressed = new Set();
+    this.padHeld = new Set();
     this.run = false;
     this.crouch = false;
     this.touch = matchMedia('(pointer: coarse)').matches;
@@ -19,7 +20,7 @@ export class Input {
   }
 
   reset() {
-    this.keys.clear(); this.pressed.clear(); this.stick.x = 0; this.stick.y = 0; this.taps = []; this.auto = null;
+    this.keys.clear(); this.pressed.clear(); this.padHeld.clear(); this.stick.x = 0; this.stick.y = 0; this.taps = []; this.auto = null;
     // Menus and lost focus cancel the gesture itself. Otherwise a still-held
     // finger or mouse can revive movement/look after the reset.
     this.cancelTouch?.();
@@ -173,17 +174,47 @@ export class Input {
     return Math.hypot(this.stick.x, this.stick.y) > 0.15 || ['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].some((c) => k.has(c));
   }
   takeTaps() { const t = this.taps || []; this.taps = []; return t; }
+  readPad() {
+    // Gamepad API is supported on Windows/Chromium and Steam Input's virtual
+    // Xbox controller. No gamepad connected? Mouse/keyboard work as before.
+    const pads=typeof navigator!=='undefined'&&typeof navigator.getGamepads==='function'
+      ? navigator.getGamepads() : null;
+    const pad=pads&&Array.from(pads).find(p=>p?.connected);
+    if(!pad){this.padHeld.clear();return null;}
+    const dead=v=>{
+      if(!Number.isFinite(v)||Math.abs(v)<0.18)return 0;
+      return Math.max(-1,Math.min(1,(v-Math.sign(v)*0.18)/0.82));
+    };
+    const axes=pad.axes||[];
+    for(const [button,action] of [[0,'jump'],[2,'use'],[1,'back'],[3,'map']]){
+      const now=!!pad.buttons?.[button]?.pressed;
+      if(now&&!this.padHeld.has(button))this.pressed.add(action);
+      if(now)this.padHeld.add(button);else this.padHeld.delete(button);
+    }
+    return {
+      x:dead(axes[0]),z:dead(axes[1]),
+      rx:dead(axes[2]),ry:dead(axes[3]),
+      running:!!pad.buttons?.[5]?.pressed
+    };
+  }
+
   movement() {
     const k = this.keys;
     let x = (k.has('d') || k.has('arrowright') ? 1 : 0) - (k.has('a') || k.has('arrowleft') ? 1 : 0);
     let z = (k.has('s') || k.has('arrowdown') ? 1 : 0) - (k.has('w') || k.has('arrowup') ? 1 : 0);
     x += this.stick.x; z += this.stick.y;
+    const pad=this.readPad();
+    if(pad){x+=pad.x;z+=pad.z;}
     if (!x && !z && this.auto) { x = this.auto.x; z = this.auto.z; }
     const len = Math.hypot(x, z);
     if (len > 1) { x /= len; z /= len; }
-    return { x, z, running: this.run || k.has('shift'), crouching: this.crouch };
+    return { x, z, running: this.run || k.has('shift') || !!pad?.running, crouching: this.crouch };
   }
 
   consume(name) { const had = this.pressed.has(name); this.pressed.delete(name); return had; }
-  takeLook() { const l = { ...this.look }; this.look.dx = 0; this.look.dy = 0; return l; }
+  takeLook() {
+    const pad=this.readPad();
+    if(pad){this.look.dx+=pad.rx*9;this.look.dy+=pad.ry*7;}
+    const l={...this.look};this.look.dx=0;this.look.dy=0;return l;
+  }
 }

@@ -10,6 +10,12 @@ This repository is intentionally **separate from the live web game and its devel
 - **[Download the verified Windows playtest build](https://github.com/joshualparris/RepoTown-Desktop/releases)** — select the latest Windows *prerelease*, download the ZIP, extract it, and launch `Repository Town.exe`. No Steam account is required. It has passed an actual packaged Electron game-load and local-storage-reload test.
 - **Status:** playable development build, **not** a released Steam product. Steamworks onboarding, commercial asset rights, a complete shared-world simulation, and gameplay polish are still required.
 
+## Desktop candidate 0.3
+
+This development candidate adds first-day onboarding, a genuine Game menu to back up or restore approved game progress, an automatic private backup before importing a saved game, and basic gamepad support (left stick movement, right stick camera, right shoulder run, A jump, X interact, B back, Y map).
+
+**Commercial readiness is explicitly blocked** until the Steamworks, legal-content and gameplay requirements in [Steam go/no-go](docs/STEAM_GO_NO_GO.md) are independently evidenced. Run `npm run steam:gate` to see the remaining requirements; this check is intentionally red for now.
+
 ## Privacy-first source policy
 - Never fork, mirror, submodule, or import the original repository's Git history.
 - The game snapshot must be generated from the upstream **sanitised public build** only, not from original briefs, personal/project databases, private builds, audit logs, credentials, or entire source directories.

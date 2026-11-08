@@ -1,0 +1,15 @@
+#rt-desktop-guide{position:fixed;right:16px;bottom:18px;z-index:125;
+  width:min(318px,calc(100vw - 32px));box-sizing:border-box;
+  padding:15px 17px;border-radius:12px;
+  border:1px solid #526a7a;background:rgba(15,30,43,.96);
+  color:#f5f8f9;box-shadow:0 14px 44px rgba(0,0,0,.35);
+  font:14px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
+#rt-desktop-guide strong{display:block;font-weight:750;font-size:16px;color:#fff}
+#rt-desktop-guide p{margin:9px 0 11px;color:#d9e8e9}
+#rt-guide-actions{display:flex;justify-content:flex-start;gap:8px;flex-wrap:wrap}
+#rt-guide-actions button{font:inherit;border-radius:7px;padding:7px 11px;
+  border:1px solid #8098a5;cursor:pointer;background:#2e5667;color:#fff}
+#rt-guide-actions button:last-child{background:transparent}
+#rt-guide-actions button:focus-visible{outline:3px solid #ffe293;outline-offset:2px}
+@media(max-width:600px){#rt-desktop-guide{right:8px;bottom:8px;width:min(300px,calc(100vw - 16px));padding:10px 13px}}
+@media(prefers-reduced-motion:reduce){#rt-desktop-guide{animation:none!important}}

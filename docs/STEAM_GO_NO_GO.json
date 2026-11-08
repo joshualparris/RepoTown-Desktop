@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "steamAppId": null,
+  "steamDepotId": null,
+  "requirements": {
+    "steamworksOnboarding": {
+      "complete": false,
+      "evidence": ""
+    },
+    "steamDirectFeeAndWaitingPeriod": {
+      "complete": false,
+      "evidence": ""
+    },
+    "storePageReviewedByValve": {
+      "complete": false,
+      "evidence": ""
+    },
+    "publicComingSoonPeriod": {
+      "complete": false,
+      "evidence": ""
+    },
+    "gameBuildReviewedByValve": {
+      "complete": false,
+      "evidence": ""
+    },
+    "commercialContentRightsAudited": {
+      "complete": false,
+      "evidence": ""
+    },
+    "AIContentSurveyAccurate": {
+      "complete": false,
+      "evidence": ""
+    },
+    "gameplayQualityAndAccessibilityAccepted": {
+      "complete": false,
+      "evidence": ""
+    },
+    "publisherApprovedLaunch": {
+      "complete": false,
+      "evidence": ""
+    }
+  },
+  "note": "No personal identity, banking details or credentials belong in this file. Do not change any status without actual verified Steamworks evidence. A successful development build is NOT publication approval."
+}
