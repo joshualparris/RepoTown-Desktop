@@ -138,6 +138,21 @@ const reviewedInput=path.resolve(path.dirname(fileURLToPath(import.meta.url)),
   '../desktop/overrides/input.js');
 if(!fs.existsSync(reviewedInput))throw Error('Missing reviewed Steam Input override');
 fs.copyFileSync(reviewedInput,path.join(destination,'engine','input.js'));
+// Remove any hosted personal/third-party voicebank client in the upstream
+// public build. This is Steam-only and persists through subsequent imports.
+const voiceOverride=path.resolve(path.dirname(fileURLToPath(import.meta.url)),
+  '../desktop/overrides/voicebank.js');
+if(!fs.existsSync(voiceOverride))throw Error('Steam local-voice override is missing');
+fs.copyFileSync(voiceOverride,path.join(destination,'ui','voicebank.js'));
+for(const notice of [
+  'LICENSE-THREE-MIT.txt','LICENSE-APACHE-2.0.txt','NOTICE-HLS.txt',
+  'THIRD_PARTY_NOTICES.txt'
+]){
+  const src=path.resolve(path.dirname(fileURLToPath(import.meta.url)),
+    '../desktop/overrides/vendor',notice);
+  if(!fs.existsSync(src))throw Error('Missing mandatory dependency notice: '+notice);
+  fs.copyFileSync(src,path.join(destination,'vendor',notice));
+}
 const reviewedSavePage=path.join(overlayDir,'release.html');
 if(!fs.existsSync(reviewedSavePage))throw Error('Missing safe save-transfer page');
 fs.copyFileSync(reviewedSavePage,path.join(destination,'release.html'));
