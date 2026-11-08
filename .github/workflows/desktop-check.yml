@@ -38,6 +38,9 @@ jobs:
         run: npm run audit:privacy
       - if: steps.snapshot.outputs.found == 'true'
         run: npm run package:windows
+      - name: Test the actual packaged Windows executable and local save reload
+        if: steps.snapshot.outputs.found == 'true'
+        run: npm run test:electron
       - if: steps.snapshot.outputs.found == 'true'
         uses: actions/upload-artifact@v4
         with:

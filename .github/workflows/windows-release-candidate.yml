@@ -1,0 +1,48 @@
+name: Release tested Windows playtest build
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'desktop/**'
+      - 'game/**'
+      - 'tests/electron-smoke.mjs'
+      - 'tools/privacy-gate.mjs'
+      - 'tools/steam-manifest.mjs'
+      - 'package.json'
+      - '.github/workflows/windows-release-candidate.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: windows-release-candidate
+  cancel-in-progress: false
+jobs:
+  test-package-publish:
+    runs-on: windows-2022
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned Windows development dependencies
+        run: npm install --no-audit --no-fund
+      - name: Privacy gate and desktop source checks
+        run: npm run test:steam-ready
+      - name: Package full Windows game
+        run: npm run package:windows
+      - name: Launch the real packaged executable
+        run: npm run test:electron
+      - name: Upload tested ZIP artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: RepoTown-Desktop-tested-Windows
+          path: release/RepoTown-Desktop-*.zip
+          retention-days: 30
+      - name: Publish durable GitHub prerelease for playtesting
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = "windows-playtest-$($env:GITHUB_SHA.Substring(0,8))"
+          gh release create $tag release/RepoTown-Desktop-*.zip --prerelease --title "Repository Town Windows playtest ($tag)" --notes "Verified development build, NOT a Steam release. Privacy scan passed; real Windows executable, WebGL world and local-save reload passed. Extract ZIP and run Repository Town.exe. Current multiplayer is shared player presence only. Commercial rights and Steamworks review remain open."
