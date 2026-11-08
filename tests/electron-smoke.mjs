@@ -69,7 +69,7 @@ try {
   // previous blanket Electron permission denial made pointer lock impossible
   // even though the browser game had the L/capture controls.
   const gameCanvas=page.locator('canvas').first();
-  await gameCanvas.click({position:{x:35,y:35}});
+  await gameCanvas.click({position:{x:450,y:300}});
   await page.keyboard.press('l');
   await page.waitForFunction(()=>document.pointerLockElement?.tagName==='CANVAS',
     null,{timeout:12000});
