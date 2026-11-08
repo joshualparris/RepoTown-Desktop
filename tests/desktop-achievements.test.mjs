@@ -12,7 +12,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 let app;
 try {
   app = await electron.launch({
-    args: [root, '--use-angle=swiftshader', '--enable-unsafe-swiftshader'],
+    // --no-sandbox: required on CI runners where chrome-sandbox lacks SUID.
+    args: [root, '--no-sandbox', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'],
     env: { ...process.env, STEAM_ACHIEVEMENTS: '1', RT_ACHIEVEMENTS_DIR: fs.mkdtempSync(path.join(os.tmpdir(), 'rt-ach-e2e-')) },
     timeout: 90000,
   });
