@@ -64,6 +64,19 @@ function walk(dir){
   }
 }
 walk(root);
+// Steam edition must never carry the original contents of private-house briefs.
+try {
+  const world=JSON.parse(fs.readFileSync(path.join(root,'houses.json'),'utf8'));
+  for(const h of world.houses||[]){
+    if(h.visibility!=='private')continue;
+    if(h.repo!==null || h.name!=='Town Residence '+h.coordinate ||
+       h.summary!=='A fictional home in Repository Town.' ||
+       !Array.isArray(h.links)||h.links.length!==0 ||
+       h.ext?.style!=='cottage'||h.int?.rooms?.length!==2)
+      failures.push('Nonfictional private property: '+String(h.coordinate));
+  }
+}catch{failures.push('Missing or corrupted fictional house export.');}
+
 if(files<200||bytes<250000||!fs.existsSync(path.join(root,'houses.json')))failures.push('Export incomplete: expected game and world content.');
 if(failures.length){
   console.error('Privacy gate BLOCKED ('+failures.length+'). Only filenames and issue categories are shown:');
