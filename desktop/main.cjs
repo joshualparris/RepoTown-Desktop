@@ -20,6 +20,7 @@ const mime={
 };
 let server;
 let currentWindow=null;
+let restoringSave=false;
 function serve(req,res){
   try{
     const url=new URL(req.url,BASE);
@@ -104,8 +105,9 @@ async function restoreProgress(win) {
     if(!count)throw Error('No progress was restored.');
     // Destroy rather than navigate: old game unload autosave must not
     // overwrite the newly imported save before a fresh process reads it.
-    win.destroy();
-    windowForGame();
+    restoringSave=true;
+    try {win.destroy();windowForGame();}
+    finally {restoringSave=false;}
   }catch(e){reportSaveError(win,e);}
 }
 function installMenu(win){
@@ -182,6 +184,6 @@ else {
     server.listen(PORT,HOST,windowForGame);
     app.on('activate',()=>{if(!BrowserWindow.getAllWindows().length)windowForGame();});
   }).catch(err=>{console.error(err);app.quit();});
-  app.on('window-all-closed',()=>{if(process.platform!=='darwin')app.quit();});
+  app.on('window-all-closed',()=>{if(process.platform!=='darwin'&&!restoringSave)app.quit();});
   app.on('before-quit',()=>server?.close());
 }
