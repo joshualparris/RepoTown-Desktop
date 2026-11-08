@@ -64,6 +64,25 @@ function walk(dir){
   }
 }
 walk(root);
+// All referenced exhibits must be playable with included offline files.
+const REMOTE_ACTIONS=new Set(['source','readme','files','live','commits','docs','fortune','game','link']);
+try{
+  const manifest=JSON.parse(fs.readFileSync(path.join(root,'houses.json'),'utf8'));
+  let seen=0;
+  for(const house of manifest.houses||[]){
+    if(house.links?.length)failures.push('External repository links in '+house.coordinate);
+    for(const room of house.int?.rooms||[])for(const prop of room.props||[]){
+      const action=prop?.[2];if(!action?.do)continue;
+      seen++;
+      if(REMOTE_ACTIONS.has(action.do)||action.url||action.urls||action.repo)
+        failures.push('Unsupported remote attraction: '+house.coordinate);
+    }
+  }
+  if(seen<1000)failures.push('Unusually few playable town interactions');
+  const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
+  if(/href="(?:arcade|address-map|narromine-progress|narromine-compare|people|release)\\.html"/i.test(html))
+    failures.push('Broken development-only navigation in public game');
+}catch{failures.push('Cannot validate complete offline attractions.');}
 // Steam edition must never carry the original contents of private-house briefs.
 try {
   const world=JSON.parse(fs.readFileSync(path.join(root,'houses.json'),'utf8'));
