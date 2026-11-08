@@ -1,0 +1,28 @@
+Third-party licence and copyright notices for Repository Town Desktop.
+These files are provided as commercial redistribution notices, NOT as an
+assertion that the entire game or its source has been legally cleared.
+
+Three.js and Three.js examples (three.module.min.js, GLTFLoader.js,
+SkeletonUtils.js, BufferGeometryUtils.js)
+  Copyright 2010–2026 three.js authors
+  License: MIT
+  Source: https://github.com/mrdoob/three.js
+  Required full notice: LICENSE-THREE-MIT.txt
+
+hls.js (hls.light.min.mjs)
+  Copyright © 2017 Dailymotion, and additional contributors; derived work
+  copyright Brightcove where applicable
+  License: Apache License 2.0
+  Source: https://github.com/video-dev/hls.js
+  Full licence: LICENSE-APACHE-2.0.txt
+  Original project copyright notice: NOTICE-HLS.txt
+
+CC0 assets have their own licence records beside the included models:
+  Furniture: assets/furniture/LICENSE-KayKit-CC0.txt
+  Characters: assets/people/LICENSE-KayKit-CC0.txt and
+              assets/people/LICENSE-Quaternius-CC0.txt
+  Vehicles: assets/vehicles/LICENSE-Kenney-CarKit-CC0.txt
+
+Every game world script, dialogue and brand has its own provenance review
+requirement. A third-party notice does not establish game-code ownership,
+music/voice rights, rights of publicity or trademark permission.

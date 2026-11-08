@@ -12,6 +12,18 @@ This repository is intentionally **separate from the live web game and its devel
 
 The [independent GitHub Pages test](https://github.com/joshualparris/RepoTown-Desktop/actions/workflows/verify-steam-pages.yml) rechecks online loading, the 188-house world, fictionalised private-house placeholders, working offline interactions and game save transfer every day.
 
+## Desktop candidate 0.3.1 — rights and quality checks
+
+This development update replaces the previously shipped voicebank integration with
+optional local device speech, adds in-game OpenStreetMap map attribution, ships the
+required complete Three.js and hls.js licence notices, and tests the actual
+Windows 3D simulation including residents and a fictional house interior.
+
+The machine-readable release gate and Steamworks publisher approvals still say
+**NO-GO** for commercial release. See [rights review](docs/COMMERCIAL_RIGHTS_AUDIT.md),
+[OSM map provenance](docs/OSM_DATA_RIGHTS.md) and
+[Steam quality acceptance](docs/STEAM_QUALITY_ACCEPTANCE.md).
+
 ## Desktop candidate 0.3
 
 This development candidate adds first-day onboarding, a genuine Game menu to back up or restore approved game progress, an automatic private backup before importing a saved game, and basic gamepad support (left stick movement, right stick camera, right shoulder run, A jump, X interact, B back, Y map).

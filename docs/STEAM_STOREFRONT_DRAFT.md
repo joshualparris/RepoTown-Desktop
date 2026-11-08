@@ -19,6 +19,16 @@ Welcome to Repository Town, a playful alternative-universe Australian town with 
 
 **Play offline:** Your progress is saved locally on the computer. In the desktop version, the Game menu can export a backup or safely restore an earlier progress file.
 
+## OpenStreetMap and local voice disclosures
+
+Parts of the real-world Narromine town map use map data from OpenStreetMap
+contributors (ODbL). Attribution appears in the game; full provenance and
+database publication obligations remain under review.
+
+Optional NPC narration uses device text-to-speech where supported; the Steam
+edition does not distribute previously hosted human/AI voice recordings.
+Do not advertise custom recorded voices until distribution rights are settled.
+
 ## Online multiplayer disclosure (must remain visible until authoritative shared world is shipped)
 An experimental online mode lets signed-in players see one another in the same area. NPCs, vehicles, jobs, economy and inventories are **not yet synchronised**. Do NOT select Steam's full "Online Co-op" feature tag on this basis.
 

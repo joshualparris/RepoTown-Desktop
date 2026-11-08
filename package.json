@@ -1,13 +1,13 @@
 {
   "name": "repotown-desktop",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "private": true,
-  "description": "Privacy-screened Repository Town desktop Steam playtest candidate",
+  "description": "Rights-gated and quality-tested Windows Steam development candidate",
   "main": "desktop/main.cjs",
   "scripts": {
     "start": "electron .",
     "audit:privacy": "node tools/privacy-gate.mjs game",
-    "verify:desktop": "node --check desktop/main.cjs && node --check desktop/progress.cjs && node --check desktop/overlay/first-day.js && node --check tools/privacy-gate.mjs && node --check tools/snapshot-public.mjs && node --check tools/steam-manifest.mjs && npm run test:progress && node tools/verify-desktop.mjs && npm run test:steam-gate && npm run test:gamepad && npm run test:offline",
+    "verify:desktop": "node --check desktop/main.cjs && node --check desktop/progress.cjs && node --check desktop/overlay/first-day.js && node --check tools/privacy-gate.mjs && node --check tools/snapshot-public.mjs && node --check tools/steam-manifest.mjs && npm run test:progress && node tools/verify-desktop.mjs && npm run test:steam-gate && npm run test:gamepad && npm run test:offline && npm run test:rights",
     "package:windows": "electron-builder --win zip --x64",
     "test:electron": "node tests/electron-smoke.mjs",
     "test:steam-ready": "npm run verify:desktop && npm run audit:privacy",
@@ -16,7 +16,9 @@
     "steam:gate": "node tools/steam-release-gate.mjs",
     "test:steam-gate": "node --check tools/steam-release-gate.mjs",
     "test:gamepad": "node --test tests/gamepad.mjs",
-    "test:offline": "node --test tests/offline-interactions.mjs"
+    "test:offline": "node --test tests/offline-interactions.mjs",
+    "test:rights": "node tools/third-party-rights.mjs",
+    "test:quality": "node tests/steam-quality.mjs"
   },
   "devDependencies": {
     "electron": "39.0.0",
