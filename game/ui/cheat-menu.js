@@ -69,9 +69,10 @@ export function createCheatMenu({ trigger, actions }) {
   // Unlock gestures: five quick taps on the HUD title, or backtick three times.
   // Five deliberate taps on the visible HUD title. Allow slower mobile touch
   // delivery and software-rendered frames: a real person's five taps may
-  // arrive over >1 second without intending to abandon the gesture.
+  // arrive almost three seconds apart on a busy phone or software WebGL runner.
+  // Still require five actual title clicks plus the existing password.
   // Still requires all five taps on the actual title and the password.
-  const TAP_GAP_MS = 2500;
+  const TAP_GAP_MS = 4000;
   let taps = 0, lastTap = 0;
   trigger?.addEventListener('click', () => {
     const now = performance.now(); taps = now - lastTap < TAP_GAP_MS ? taps + 1 : 1; lastTap = now;
