@@ -182,4 +182,20 @@ fs.writeFileSync(path.join(destination,'desktop-export.json'),JSON.stringify({
   files:copied,bytes:totalBytes,
   sourceBuild:'upstream public release only'
 },null,2)+'\n');
+// release.json: the game's ui/release.js fetches this to show a "Version
+// <commit> · saves" link. Without it the desktop build 404s and silently loses
+// that link. sourceCommit is this desktop repo's HEAD (40-hex, as release.js
+// validates); contentHash fingerprints the export for provenance.
+try{
+  const {execSync}=await import('node:child_process');
+  const head=execSync('git rev-parse HEAD',{cwd:path.resolve(fileURLToPath(new URL('.',import.meta.url)),'..'),encoding:'utf8'}).trim();
+  if(/^[a-f0-9]{40}$/.test(head)){
+    fs.writeFileSync(path.join(destination,'release.json'),JSON.stringify({
+      sourceCommit:head,
+      contentHash:createHash('sha256').update(fs.readFileSync(path.join(destination,'desktop-export.json'))).digest('hex'),
+      releaseType:'desktop-development'
+    },null,2)+'\n');
+    copied++;
+  }
+}catch{/* not a git checkout: keep the old behaviour (no version link) */}
 console.log('Created privacy-restricted desktop snapshot: '+copied+' files, skipped '+skipped+' paths.');
