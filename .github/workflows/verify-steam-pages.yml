@@ -1,6 +1,5 @@
 name: Steam edition live GitHub Pages browser verification
 on:
-  pull_request:
   push:
     branches: [main]
     paths:
@@ -8,7 +7,7 @@ on:
       - '.github/workflows/verify-steam-pages.yml'
   workflow_dispatch:
   schedule:
-    - cron: '31 18 * * *'
+    - cron: '31 18 * * 0'
 permissions:
   contents: read
 jobs:

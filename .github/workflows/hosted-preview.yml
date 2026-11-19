@@ -1,8 +1,7 @@
 name: Verify public desktop preview is playable
 on:
-  pull_request:
-  push:
-    branches: [main]
+  # Live deployment checks are redundant on every PR or push; use the
+  # scheduled live verification workflow for automatic coverage.
   workflow_dispatch:
 permissions:
   contents: read
